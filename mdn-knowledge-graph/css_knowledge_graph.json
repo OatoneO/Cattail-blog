@@ -1,0 +1,536 @@
+{
+  "nodes": [
+    {
+      "id": "web/css/::file-selector-button",
+      "type": "css_concept",
+      "properties": {
+        "title": "::file-selector-button",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/::file-selector-button",
+        "summary": "::file-selector-button CSS 伪元素代表 type=\"file\" 的 <input> 的按钮。",
+        "category": "::file-selector-button",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/@counter-style",
+      "type": "css_concept",
+      "properties": {
+        "title": "@counter-style",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/@counter-style",
+        "summary": "@counter-style 是一个 CSS at 规则让开发者可以自定义计数器的样式。一个 @counter-style 规则定义了如何把一个计数器的值转化为字符串表示。",
+        "category": "@counter-style",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/@font-face/font-style",
+      "type": "css_concept",
+      "properties": {
+        "title": "font-style",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/@font-face/font-style",
+        "summary": "font-style CSS 描述符允许作者为 @font-face @ 规则中指定的字体指定字体样式。",
+        "category": "@font-face",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/align-self",
+      "type": "css_concept",
+      "properties": {
+        "title": "align-self",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/align-self",
+        "summary": "CSS 属性 align-self 会对齐当前 grid 或 flex 行中的元素，并覆盖已有的 align-items 的值。In Grid, it aligns the item inside the grid area. 在 Flexbox 中，会按照 cross axis（当前 flex 元素排列方向的垂直方向）进行排列。",
+        "category": "align-self",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/border-style",
+      "type": "css_concept",
+      "properties": {
+        "title": "border-style",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/border-style",
+        "summary": "border-style 是一个 CSS 简写属性，用来设定元素所有边框的样式。",
+        "category": "border-style",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/contain-intrinsic-size",
+      "type": "css_concept",
+      "properties": {
+        "title": "contain-intrinsic-size",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/contain-intrinsic-size",
+        "summary": "CSS 简写属性 contain-intrinsic-size 定义了元素受尺寸局限时浏览器用于布局的元素尺寸。",
+        "category": "contain-intrinsic-size",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/css",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/css",
+        "summary": "CSS 接口涵盖 CSS 相关的实用方法。尚且不存在实现这个接口的对象：它仅仅包含静态的方法，因此也是一个实用性的接口。",
+        "category": "css",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/css/supports_static",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS.supports()",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/css/supports_static",
+        "summary": "CSS.supports() 静态方法返回一个Boolean值，用来校验浏览器是否支持一个给定的 CSS 特性。",
+        "category": "css",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_box_alignment/box_alignment_in_flexbox",
+      "type": "css_concept",
+      "properties": {
+        "title": "弹性盒布局中的盒对齐方式",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_box_alignment/box_alignment_in_flexbox",
+        "summary": "Box Alignment 规范详细说明了对齐 (alignment) 在各种布局方法中的工作原理; 在此页面中，我们将探讨盒子对齐（box aligment）在 Flexbox 环境中的工作原理。由于此页面旨在详细说明特定于 Flexbox 和框对齐的内容，因此应与Box Alignment 页面一起阅读，该页面详细说明了不同布局方法的框对齐的常见方法。",
+        "category": "css_box_alignment",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_box_alignment",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS 盒子对齐",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_box_alignment",
+        "summary": "CSS 盒子对齐 (Box Alignment) 模块指定了在各种 CSS 盒子布局模型，如块布局，表布局，弹性布局和网格布局中，与盒子对齐有关的 CSS 功能。该模块旨在建立一种能一致地在 CSS 中指定对齐的方法。这份文档详述了出现在该规范中的一般概念。",
+        "category": "css_box_alignment",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_flexible_box_layout/basic_concepts_of_flexbox",
+      "type": "css_concept",
+      "properties": {
+        "title": "flex 布局的基本概念",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_flexible_box_layout/basic_concepts_of_flexbox",
+        "summary": "Flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型。它给 flexbox 的子元素之间提供了强大的空间分布和对齐能力。本文给出了 flexbox 的主要特性，更多的细节将在别的文档中探索。",
+        "category": "css_flexible_box_layout",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_flexible_box_layout/aligning_items_in_a_flex_container",
+      "type": "css_concept",
+      "properties": {
+        "title": "对齐弹性容器中的项目",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_flexible_box_layout/aligning_items_in_a_flex_container",
+        "summary": "弹性盒之所以能迅速吸引开发者的注意，其中一个原因就是它首次为网页样式居中提供了合适的方案。得益于它提供的合适的垂直居中能力，我们可以很轻松地把一个盒子居中。在这份指南里，我们将详细地介绍 flexbox 的垂直和水平居中的工作原理。",
+        "category": "css_flexible_box_layout",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_flexible_box_layout",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS 弹性盒子布局",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_flexible_box_layout",
+        "summary": "CSS 弹性盒子布局是 CSS 的模块之一，定义了一种针对用户界面设计而优化的 CSS 盒子模型。在弹性布局模型中，弹性容器的子元素可以在任何方向上排布，也可以“弹性伸缩”其尺寸，既可以增加尺寸以填满未使用的空间，也可以收缩尺寸以避免父元素溢出。子元素的水平对齐和垂直对齐都能很方便的进行操控。通过嵌套这些框（水平框在垂直框内，或垂直框在水平框内）可以在两个维度上构建布局。",
+        "category": "css_flexible_box_layout",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_flexible_box_layout/ordering_flex_items",
+      "type": "css_concept",
+      "properties": {
+        "title": "Flex 项排序",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_flexible_box_layout/ordering_flex_items",
+        "summary": "Flexbox 和 Grid 等新的布局方法为内容的顺序控制提供了可能。在本文中，我们将介绍使用 Flexbox 时如何更改内容的视觉顺序。我们还将从无障碍的角度考虑重新排序项目的影响。",
+        "category": "css_flexible_box_layout",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_grid_layout/realizing_common_layouts_using_grids",
+      "type": "css_concept",
+      "properties": {
+        "title": "利用 CSS 网格布局实现常用布局",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_grid_layout/realizing_common_layouts_using_grids",
+        "summary": "为了完善这组 CSS 网格布局指南，我将介绍几种不同的布局，它们演示了在使用网格布局进行设计时可以使用的一些不同技术。我们将看到一个使用 grid-template-areas 的示例，一个典型的 12 列灵活网格系统，以及一个使用自动布局的产品列表。正如你从这组示例中看到的，使用网格布局通常有不止一种方法来实现你想要的结果。选择对你正在解决的问题和需要实现的设计最有帮助的方法。",
+        "category": "css_grid_layout",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "learn_web_development/core/css_layout/introduction",
+      "type": "css_concept",
+      "properties": {
+        "title": "介绍 CSS 布局",
+        "url": "https://developer.mozilla.org/zh-CN/docs/learn_web_development/core/css_layout/introduction",
+        "summary": "本文将回顾我们以前模块中已经介绍过的一些 CSS 布局特性——例如不同的display值——并介绍我们将在本模块中使用的一些概念。",
+        "category": "css_layout",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_masking",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS Masking",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_masking",
+        "summary": "CSS Masking 是一个 CSS 模块，它定义了部分或完全隐藏视觉元素部分的方法，包括遮罩和剪裁。",
+        "category": "css_masking",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_positioned_layout",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS Positioning",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_positioned_layout",
+        "summary": "CSS Positioning 是一个 CSS 模块，用来定义如何将元素在页面中进行绝对定位和相对定位。",
+        "category": "css_positioned_layout",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_scrollbars_styling",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS Scrollbars",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_scrollbars_styling",
+        "summary": "CSS Scrollbars 标准化了由 ie5 引入的废弃的滚动条颜色属性",
+        "category": "css_scrollbars_styling",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_table",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS Table",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_table",
+        "summary": "CSS Table 是一个定义如何展示表格数据的 CSS 模块。",
+        "category": "css_table",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_text",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS Text",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_text",
+        "summary": "CSS Text 是一个控制文本渲染方式的 CSS 模块，例如换行、对齐、空格处理、大小写。",
+        "category": "css_text",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/css_transforms",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS Transforms",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/css_transforms",
+        "summary": "CSS Transforms 是一个 CSS 模块，它定义了如何在二维或三维空间中转换元素的 CSS 样式。",
+        "category": "css_transforms",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/cssstylerule/style",
+      "type": "css_concept",
+      "properties": {
+        "title": "style",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/cssstylerule/style",
+        "summary": "返回 一个 CSSStyleDeclaration接口对象，它代表了CSSRule的 declaration block。",
+        "category": "cssstylerule",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/cssstylerule/selectortext",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSSStyleRule.selectorText",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/cssstylerule/selectortext",
+        "summary": "CSSRule.selectorText 属性返回 CSS 规则的选择符文本，只读。动态设置 CSS 规则，请看 Using dynamic styling information.",
+        "category": "cssstylerule",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/document/queryselector",
+      "type": "css_concept",
+      "properties": {
+        "title": "document.querySelector()",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/document/queryselector",
+        "summary": "文档对象模型Document引用的 querySelector() 方法返回文档中与指定选择器或选择器组匹配的第一个 Element对象。如果找不到匹配项，则返回null。",
+        "category": "document",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/document/queryselectorall",
+      "type": "css_concept",
+      "properties": {
+        "title": "Document.querySelectorAll",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/document/queryselectorall",
+        "summary": "返回与指定的选择器组匹配的文档中的元素列表 (使用深度优先的先序遍历文档的节点)。返回的对象是 NodeList 。",
+        "category": "document",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/documentfragment/queryselector",
+      "type": "css_concept",
+      "properties": {
+        "title": "DocumentFragment.querySelector()",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/documentfragment/queryselector",
+        "summary": "DocumentFragment.querySelector() 方法返回第一个在 DocumentFragment 中的、符合选择器的元素。其使用深度优先，前序遍历规则遍历文档中的节点。如果没有匹配结果，返回 null 。",
+        "category": "documentfragment",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/documentfragment/queryselectorall",
+      "type": "css_concept",
+      "properties": {
+        "title": "DocumentFragment.querySelectorAll()",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/documentfragment/queryselectorall",
+        "summary": "DocumentFragment.queryselectorall() 方法返回NodeList中的元素DocumentFragment(使用文档节点的深度优先顺序遍历) 匹配指定的选择器组。",
+        "category": "documentfragment",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/element/queryselector",
+      "type": "css_concept",
+      "properties": {
+        "title": "Element.querySelector()",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/element/queryselector",
+        "summary": "返回与指定的选择器组匹配的元素的后代的第一个元素。",
+        "category": "element",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/api/element/queryselectorall",
+      "type": "css_concept",
+      "properties": {
+        "title": "Element.querySelectorAll()",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/api/element/queryselectorall",
+        "summary": "返回一个静态（非动态，non-live）的 NodeList，它包含所有元素的非动态节点，该元素来自与其匹配指定的 CSS 选择器组的元素。（基础元素本身不包括，即使它匹配。）",
+        "category": "element",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/font-style",
+      "type": "css_concept",
+      "properties": {
+        "title": "font-style",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/font-style",
+        "summary": "font-style CSS 属性允许你选择 font-family 字体下的 italic 或 oblique 样式。",
+        "category": "font-style",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/html/global_attributes/style",
+      "type": "css_concept",
+      "properties": {
+        "title": "style",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/html/global_attributes/style",
+        "summary": "style 全局属性包含应用到元素的 CSS 样式声明。要注意样式最好定义在单独的文件中。这个属性以及 <style> 元素的主要目的是快速装饰，例如用于测试目的。",
+        "category": "global_attributes",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid",
+        "summary": "grid 是一个 CSS 简写属性，可以用来设置以下属性： 显式网格属性 grid-template-rows、grid-template-columns 和 grid-template-areas， 隐式网格属性 grid-auto-rows、grid-auto-columns 和 grid-auto-flow， 间距属性 grid-column-gap 和 grid-row-gap。",
+        "category": "grid",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-area",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-area",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-area",
+        "summary": "CSS 属性 grid-area 是一种对于 grid-row-start、grid-column-start、grid-row-end 和 grid-column-end 的简写，通过基线（line），跨度（span）或没有（自动）的网格放置在 grid row 中指定一个网格项的大小和位置，继而确定 grid area 的边界。",
+        "category": "grid-area",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-auto-columns",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-auto-columns",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-auto-columns",
+        "summary": "CSS 属性 grid-auto-columns 指定了隐式创建的网格纵向轨道（track）的宽度。",
+        "category": "grid-auto-columns",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-auto-flow",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-auto-flow",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-auto-flow",
+        "summary": "grid-auto-flow 属性控制着自动布局算法怎样运作，精确指定在网格中被自动布局的元素怎样排列。",
+        "category": "grid-auto-flow",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-auto-rows",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-auto-rows",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-auto-rows",
+        "summary": "CSS 属性 grid-auto-rows 用于指定隐式创建的行轨道大小。",
+        "category": "grid-auto-rows",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-column",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-column",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-column",
+        "summary": "grid-column CSS 属性是 grid-column-start 和 grid-column-end 的简写属性，用于指定网格项目的大小和位置{ 通过为它的网格位置贡献线条，跨度或不添加任何内容（自动），从而指定其 grid area。",
+        "category": "grid-column",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-row",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-row",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-row",
+        "summary": "grid-row 属性是一种 grid-row-start 和 grid-row-end 的缩写（shorthand）形式，它定义了网格单元与网格行（row）相关的尺寸和位置，可以通过在网格布局中的基线（line）、跨度（span），或者什么也不做（自动），从而指定网格区域的行起始与行结束。",
+        "category": "grid-row",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-template",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-template",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-template",
+        "summary": "grid-template，CSS 属性简写，用以定义网格中行、列与分区。",
+        "category": "grid-template",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-template-areas",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-template-areas",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-template-areas",
+        "summary": "grid-template-areas CSS 属性是网格区域 grid areas 在 CSS 中的特定命名。",
+        "category": "grid-template-areas",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/grid-template-rows",
+      "type": "css_concept",
+      "properties": {
+        "title": "grid-template-rows",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/grid-template-rows",
+        "summary": "grid-template-rows 该属性是基于 网格行 的维度，去定义网格线的名称和网格轨道的尺寸大小。",
+        "category": "grid-template-rows",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/list-style",
+      "type": "css_concept",
+      "properties": {
+        "title": "list-style",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/list-style",
+        "summary": "list-style CSS 属性是一个简写对属性集合，包括list-style-type, list-style-image, 和 list-style-position。",
+        "category": "list-style",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/outline-style",
+      "type": "css_concept",
+      "properties": {
+        "title": "outline-style",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/outline-style",
+        "summary": "outline-style CSS 属性被用于设置一个元素轮廓的样式。",
+        "category": "outline-style",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/place-items",
+      "type": "css_concept",
+      "properties": {
+        "title": "place-items",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/place-items",
+        "summary": "CSS 中的 place-items 是一个简写属性 ，它允许你在相关的布局（如网格或弹性盒子）中可以同时沿着块级和内联方向对齐元素（例如：align-items 和 justify-items 属性）。如果未提供第二个值，则第一个值作为第二个值的默认值。",
+        "category": "place-items",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "learn_web_development/core/styling_basics/organizing",
+      "type": "css_concept",
+      "properties": {
+        "title": "组织 CSS",
+        "url": "https://developer.mozilla.org/zh-CN/docs/learn_web_development/core/styling_basics/organizing",
+        "summary": "在开始在更大的样式表和大项目上作业的时候，你会发现维护一个大型的 CSS 文件很有挑战性。在本文中，我们将会简要看一下在编写你的 CSS 时，让它更加易于维护的一些最佳实践，以及你会在其他人那里看到的，用来增强可维护性的解决方案。",
+        "category": "styling_basics",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "web/css/table-layout",
+      "type": "css_concept",
+      "properties": {
+        "title": "table-layout",
+        "url": "https://developer.mozilla.org/zh-CN/docs/web/css/table-layout",
+        "summary": "table-layout CSS 属性定义了用于布局表格的单元格、行和列的算法。",
+        "category": "table-layout",
+        "popularity": 0
+      }
+    },
+    {
+      "id": "glossary/css",
+      "type": "css_concept",
+      "properties": {
+        "title": "CSS",
+        "url": "https://developer.mozilla.org/zh-CN/docs/glossary/css",
+        "summary": "CSS （Cascading Style Sheets，层叠样式表）是用来控制网页在浏览器中的显示外观的声明式语言。",
+        "popularity": 0
+      }
+    }
+  ],
+  "meta": {
+    "source": "MDN CSS Documentation",
+    "timestamp": "2025-03-24T19:56:53.344Z",
+    "total_nodes": 48
+  }
+}
