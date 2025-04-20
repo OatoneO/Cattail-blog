@@ -4,7 +4,7 @@ export default function OpenToWork() {
   return (
     <div className="flex flex-col items-start justify-center w-full gap-2 p-6 mb-16 border border-dashed rounded-lg bg-muted">
       {/* <IntroScrollMouse /> */}
-      <h2 className="text-xl text-green-200 opacity-60">Open to Work!</h2>
+      <h2 className="text-xl text-muted-foreground">Open to Work!</h2>
       <div>
         <p>
           I am actively looking for Software Engineer Internship for Summer

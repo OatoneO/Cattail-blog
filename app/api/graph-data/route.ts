@@ -1,15 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getGraphData } from '@/lib/neo4j-service';
 
-export async function GET() {
-  console.log('收到获取图谱数据的 API 请求');
-  
+export async function GET(request: Request) {
   try {
-    console.log('开始从 Neo4j 获取数据...');
-    const data = await getGraphData();
-    console.log('成功获取图谱数据:', data);
-    console.log(`返回 ${data.nodes.length} 个节点和 ${data.relationships.length} 个关系`);
-    
+    // 从URL参数中获取图谱类型
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type') as 'css' | 'html' || 'css';
+
+    const data = await getGraphData(type);
     return NextResponse.json(data);
   } catch (error) {
     console.error('获取图谱数据失败:', error);

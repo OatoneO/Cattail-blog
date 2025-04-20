@@ -1,28 +1,26 @@
-import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
+"use client";
 
-const localization = {
-  signUp: {
-    start: {
-      title: "Sign Up",
-      subtitle: "Create an account",
-    },
-  },
-  signIn: {
-    start: {
-      title: "Welcome Back",
-      subtitle: "Sign in to Cattail's blog",
-    },
-  },
-};
+import { ClerkProvider } from "@clerk/nextjs";
+import { enUS, zhCN } from "@clerk/localizations";
+import { neobrutalism, light } from "@clerk/themes";
 
 export default function ClerkProviderWrapper({ children }) {
   return (
-    <ClerkProvider
+    <ClerkProvider 
+      localization={zhCN}
       appearance={{
-        baseTheme: dark,
+        baseTheme: light,
+        variables: {
+          borderRadius: '0.5rem',
+        },
+        elements: {
+          card: "shadow-md",
+          formButtonPrimary: 
+            "bg-primary text-primary-foreground hover:bg-primary/90",
+          socialButtonsBlockButton: "border border-border",
+          footerActionLink: "text-primary hover:text-primary/90",
+        }
       }}
-      localization={localization}
     >
       {children}
     </ClerkProvider>

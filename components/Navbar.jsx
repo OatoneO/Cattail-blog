@@ -1,67 +1,88 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { UserButton, useAuth } from "@clerk/nextjs";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import { ThemeToggle } from "./ThemeToggle";
 import { MobileMenu } from "./MobileMenu";
+import { GithubIcon } from "lucide-react";
+import SocialMediaLink from "./SocialMediaLink";
 
-export const navigationItems = [
-  {
-    name: "Home",
-    href: "/",
-  },
-  {
-    name: "Blog",
-    href: "/blog",
-  },
-  {
-    name: "Project",
-    href: "/project",
-  },
-  {
-    name: "Knowledge Graph",
-    href: "/knowledge-graph",
-  },
-];
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const { isSignedIn } = useAuth();
+  const pathname = usePathname();
 
-export default function Navbar({ page }) {
+  const navigationItems = [
+    { href: "/", key: "home", label: "主页" },
+    { href: "/blog", key: "blog", label: "博客" },
+    { href: "/project", key: "project", label: "项目" },
+    { href: "/knowledge-graph", key: "knowledgeGraph", label: "知识图谱" },
+    { href: "/message", key: "messageBoard", label: "留言板" },
+  ];
+
+  const adminNavigationItems = [
+    { href: "/admin/blogs", key: "adminBlogs", label: "博客管理" },
+    { href: "/admin/projects", key: "adminProjects", label: "项目管理" },
+    { href: "/admin/settings", key: "adminSettings", label: "设置" },
+  ];
+
+  const allNavItems = isSignedIn ? [...navigationItems, ...adminNavigationItems] : navigationItems;
+
   return (
-    <>
-      <div className="justify-center hidden col-span-2 mt-0.5 sm:flex h-14">
-        <ul className="items-center justify-center hidden bg-[#f2f2f21a] rounded-full sm:flex px-2 py-1 ">
-          {navigationItems.map((item) => {
-            const isSelected = page == item.href;
-            return (
-              <motion.li key={item.name} className="relative">
-                {isSelected && (
-                  <>
-                    <motion.div
-                      className="absolute left-1/4 w-1/2 mx-auto border-t-[3px] rounded-full shadow-[0_20px_100px_8px_#fff]"
-                      layoutId="selected"
-                    ></motion.div>
-                    <motion.div
-                      className="absolute top-0.5 bottom-0.5 w-full bg-[#f2f2f20d] rounded-full"
-                      layoutId="selecteddiv"
-                    ></motion.div>
-                  </>
-                )}
-                <Link href={item.href}>
-                  <motion.div
-                    whileHover={{
-                      backgroundColor: "#f2f2f20d",
-                    }}
-                    className={`px-4 py-3 rounded-full ${item.name != "Home" && item.name != "Blog" && item.name != "About" ? "tracking-tight" : "tracking-widest"} font-bold text-sm`}
-                  >
-                    {item.name}
-                  </motion.div>
-                </Link>
-              </motion.li>
-            );
-          })}
-        </ul>
-      </div>
+    <nav className="z-20 container inset-x-0 top-0 bg-background/80 backdrop-blur border-b border-border py-2 mb-4">
+      <div className="flex justify-between items-center">
+        {/* Logo or Site Name */}
+        <Link href="/" className="text-lg font-bold text-primary">
+          Cattail
+        </Link>
 
-      <div className="flex items-center justify-center sm:hidden">
-        <MobileMenu />
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center bg-secondary/50 rounded-full h-12 px-2 shadow-sm">
+          {navigationItems.map((item) => (
+            <Link
+              key={item.key}
+              href={item.href}
+              className={cn(
+                "transition-colors text-sm font-medium hover:text-primary px-4 py-2 rounded-full",
+                pathname === item.href ? "bg-primary text-primary-foreground" : "text-foreground/80"
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+          {isSignedIn && adminNavigationItems.map((item) => (
+            <Link
+              key={item.key}
+              href={item.href}
+              className={cn(
+                "transition-colors text-sm font-medium hover:text-primary px-4 py-2 rounded-full",
+                pathname.startsWith(item.href) ? "bg-blue-600 text-white" : "text-blue-400"
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right side: Links, Theme Toggle, Mobile Toggle */}
+        <div className="flex items-center gap-2">
+          {/* Theme Toggle Button */}
+          <ThemeToggle />
+
+          {/* GitHub Link for Desktop */}
+          <div className="hidden md:block">
+            <UserButton />
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <div className="md:hidden">
+            <MobileMenu navItems={allNavItems} />
+          </div>
+        </div>
       </div>
-    </>
+    </nav>
   );
 }

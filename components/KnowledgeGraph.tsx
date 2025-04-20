@@ -162,18 +162,28 @@ export default function KnowledgeGraph() {
       return;
     }
 
+    // 清除之前的状态
+    setIsLoading(true);
+    setError(null);
+    
     // 清除之前的 SVG 内容
     d3.select(svgElementRef.current).selectAll('*').remove();
     
+    // 停止之前的动画
+    if (timerRef.current) {
+      timerRef.current.stop();
+      timerRef.current = null;
+    }
+
     // 计算视口尺寸，避免滚动条
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    const width = Math.min(viewportWidth * 0.8, viewportWidth - 40); // 80vw 或视口宽度减40px
-    const height = Math.min(viewportHeight * 0.6, viewportHeight - 100); // 60vh 或视口高度减100px
+    const width = Math.min(viewportWidth * 0.8, viewportWidth - 40);
+    const height = Math.min(viewportHeight * 0.6, viewportHeight - 100);
     const centerX = width / 2;
     const centerY = height / 2;
 
-    console.log('开始设置 SVG 和缩放...');
+    console.log('开始设置知识图谱...');
     svgRef.current = d3.select<SVGSVGElement, unknown>(svgElementRef.current)
       .attr('width', width)
       .attr('height', height);
@@ -191,6 +201,9 @@ export default function KnowledgeGraph() {
     svgRef.current.call(zoomRef.current);
 
     // 创建提示框
+    if (tooltipRef.current) {
+      tooltipRef.current.remove();
+    }
     tooltipRef.current = d3.select('body')
       .append('div')
       .attr('class', 'tooltip')
@@ -207,30 +220,33 @@ export default function KnowledgeGraph() {
       .style('z-index', '1000');
 
     // 获取数据并渲染图谱
-    console.log('开始获取图谱数据...');
-    setIsLoading(true);
-    setError(null);
+    console.log('开始获取知识图谱数据...');
     
-    fetch('/api/graph-data')
-      .then(response => {
-        console.log('API 响应状态:', response.status);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data: GraphData) => {
-        console.log('成功获取图谱数据:', data);
-        console.log(`节点数量: ${data.nodes.length}, 关系数量: ${data.relationships.length}`);
+    // 获取所有类型的数据
+    Promise.all([
+      fetch('/api/graph-data?type=css').then(res => res.json()),
+      fetch('/api/graph-data?type=html').then(res => res.json())
+    ])
+      .then(([cssData, htmlData]) => {
+        console.log('获取到CSS知识图谱数据:', cssData);
+        console.log('获取到HTML知识图谱数据:', htmlData);
         
+        // 合并所有节点和关系
+        const allNodes = [...cssData.nodes, ...htmlData.nodes];
+        const allRelationships = [...cssData.relationships, ...htmlData.relationships];
+        
+        if (!allNodes || allNodes.length === 0) {
+          throw new Error('没有找到知识图谱数据');
+        }
+
         // 保存节点和连接数据
-        nodesRef.current = data.nodes;
-        linksRef.current = data.relationships;
+        nodesRef.current = allNodes;
+        linksRef.current = allRelationships;
 
         // 初始化节点的球面坐标
-        data.nodes.forEach((node, i) => {
-          const phi = Math.acos(-1 + (2 * i) / data.nodes.length);
-          const theta = Math.sqrt(data.nodes.length * Math.PI) * phi;
+        allNodes.forEach((node, i) => {
+          const phi = Math.acos(-1 + (2 * i) / allNodes.length);
+          const theta = Math.sqrt(allNodes.length * Math.PI) * phi;
           node.phi = phi;
           node.theta = theta;
           const pos = project(node);
@@ -240,7 +256,7 @@ export default function KnowledgeGraph() {
 
         // 创建连接线
         const link = gRef.current!.selectAll('.link')
-          .data(data.relationships)
+          .data(allRelationships)
           .join('line')
           .attr('class', 'link')
           .style('stroke', 'rgba(255, 255, 255, 0.2)')
@@ -249,7 +265,7 @@ export default function KnowledgeGraph() {
 
         // 创建节点组
         const node = gRef.current!.selectAll<SVGGElement, Node>('.node')
-          .data(data.nodes)
+          .data(allNodes)
           .join('g')
           .attr('class', 'node');
 
@@ -262,13 +278,8 @@ export default function KnowledgeGraph() {
           .style('opacity', 0.8)
           .on('click', (event, d) => {
             event.stopPropagation();
-            setIsRotating(!isRotating);
-            if (isRotating && timerRef.current) {
-              timerRef.current.stop();
-              timerRef.current = null;
-            } else if (!isRotating) {
-              startRotation();
-            }
+            // 跳转到节点对应的网站
+            window.open(d.properties.url, '_blank');
           })
           .on('mouseover', (event, d) => {
             d3.select(event.currentTarget)
@@ -312,7 +323,13 @@ export default function KnowledgeGraph() {
           .style('font-size', '10px')
           .style('fill', '#fff')
           .style('opacity', 0.7)
-          .style('text-shadow', '0 0 3px rgba(0,0,0,0.5)');
+          .style('text-shadow', '0 0 3px rgba(0,0,0,0.5)')
+          .style('cursor', 'pointer')
+          .on('click', (event, d) => {
+            event.stopPropagation();
+            // 跳转到节点对应的网站
+            window.open(d.properties.url, '_blank');
+          });
 
         // 自动旋转
         const startRotation = () => {
@@ -324,7 +341,7 @@ export default function KnowledgeGraph() {
             rotationRef.current.x += 0.001;
             rotationRef.current.y += 0.001;
 
-            data.nodes.forEach((node, i) => {
+            allNodes.forEach((node, i) => {
               if (node.phi !== undefined && node.theta !== undefined) {
                 node.phi = node.phi + 0.001;
                 node.theta = node.theta + 0.001;
@@ -367,10 +384,10 @@ export default function KnowledgeGraph() {
 
         // 计算所有节点的边界框
         const bounds = {
-          minX: d3.min(data.nodes, d => d.x || 0) || 0,
-          maxX: d3.max(data.nodes, d => d.x || 0) || 0,
-          minY: d3.min(data.nodes, d => d.y || 0) || 0,
-          maxY: d3.max(data.nodes, d => d.y || 0) || 0
+          minX: d3.min(allNodes, d => d.x || 0) || 0,
+          maxX: d3.max(allNodes, d => d.x || 0) || 0,
+          minY: d3.min(allNodes, d => d.y || 0) || 0,
+          maxY: d3.max(allNodes, d => d.y || 0) || 0
         };
 
         // 计算缩放比例以适应所有节点
@@ -394,10 +411,22 @@ export default function KnowledgeGraph() {
         setIsLoading(false);
       })
       .catch(error => {
-        console.error('获取图谱数据失败:', error);
-        setError('获取图谱数据失败，请稍后再试');
+        console.error('获取知识图谱数据失败:', error);
+        setError(`获取知识图谱数据失败：${error.message}`);
         setIsLoading(false);
       });
+
+    // 清理函数
+    return () => {
+      if (timerRef.current) {
+        timerRef.current.stop();
+        timerRef.current = null;
+      }
+      if (tooltipRef.current) {
+        tooltipRef.current.remove();
+        tooltipRef.current = null;
+      }
+    };
   }, []);
 
   return (
@@ -412,15 +441,26 @@ export default function KnowledgeGraph() {
           className="w-full pl-10 bg-black/50 border-gray-700 text-white placeholder:text-gray-400 rounded-md border border-input px-3 py-2"
         />
       </div>
-      <div className="w-[80vw] h-[60vh] bg-black">
+      <div className="relative w-[80vw] h-[60vh] bg-black" style={{ backgroundImage: 'url(/images/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 z-10">
             <div className="text-white text-xl">加载知识图谱中...</div>
           </div>
         )}
         {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 z-10">
-            <div className="text-red-500 text-xl">{error}</div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 z-10">
+            <div className="text-red-500 text-xl mb-4">{error}</div>
+            <button
+              onClick={() => {
+                setError(null);
+                setIsLoading(true);
+                // 重试加载数据
+                window.location.reload();
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              重试
+            </button>
           </div>
         )}
         <svg ref={svgElementRef} className="w-full h-full"></svg>

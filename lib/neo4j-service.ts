@@ -72,8 +72,8 @@ async function testConnection() {
   }
 }
 
-export async function importData(data: GraphData) {
-  console.log('正在测试数据库连接...');
+export async function importData(data: GraphData, type: 'css' | 'html' = 'css') {
+  console.log(`正在测试数据库连接... (导入类型: ${type})`);
   const isConnected = await testConnection();
   if (!isConnected) {
     throw new Error('无法连接到数据库');
@@ -81,15 +81,15 @@ export async function importData(data: GraphData) {
 
   const session = driver.session();
   try {
-    console.log('清除现有数据...');
+    console.log(`清除现有${type.toUpperCase()}数据...`);
     // 清除现有数据
-    await session.run('MATCH (n) DETACH DELETE n');
+    await session.run(`MATCH (n:${type.toUpperCase()}Concept) DETACH DELETE n`);
     
-    console.log('创建节点...');
+    console.log(`创建${type.toUpperCase()}节点...`);
     // 创建节点
     for (const node of data.nodes) {
       await session.run(
-        `CREATE (n:CSSConcept {
+        `CREATE (n:${type.toUpperCase()}Concept {
           id: $id,
           type: $type,
           title: $title,
@@ -108,31 +108,31 @@ export async function importData(data: GraphData) {
       );
     }
     
-    console.log('创建关系...');
+    console.log(`创建${type.toUpperCase()}关系...`);
     // 创建关系（基于类别）
     await session.run(`
-      MATCH (a:CSSConcept), (b:CSSConcept)
+      MATCH (a:${type.toUpperCase()}Concept), (b:${type.toUpperCase()}Concept)
       WHERE a.category = b.category AND a.id <> b.id
       CREATE (a)-[r:RELATED_TO]->(b)
     `);
     
-    return { message: '数据导入成功' };
+    return { message: `${type.toUpperCase()}数据导入成功` };
   } catch (error) {
-    console.error('导入数据错误:', error);
-    throw new Error('导入数据失败');
+    console.error(`导入${type.toUpperCase()}数据错误:`, error);
+    throw new Error(`导入${type.toUpperCase()}数据失败`);
   } finally {
     await session.close();
   }
 }
 
-export async function getGraphData(): Promise<ApiGraphData> {
-  console.log('Neo4j 服务: 开始获取图谱数据');
+export async function getGraphData(type: 'css' | 'html' = 'css'): Promise<ApiGraphData> {
+  console.log(`Neo4j 服务: 开始获取${type.toUpperCase()}图谱数据`);
   const session = driver.session();
   try {
     console.log('执行 Neo4j 查询...');
     const result = await session.run(`
-      MATCH (n:CSSConcept)
-      OPTIONAL MATCH (n)-[r]->(m:CSSConcept)
+      MATCH (n:${type.toUpperCase()}Concept)
+      OPTIONAL MATCH (n)-[r]->(m:${type.toUpperCase()}Concept)
       RETURN n, collect(DISTINCT { type: type(r), target: m.id }) as relationships
     `);
     

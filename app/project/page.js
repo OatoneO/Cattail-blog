@@ -1,21 +1,18 @@
-import Projects from "@/components/Projects";
-
-import Description from "@/components/Description";
 import MotionDivWrapper from "@/components/MotionDivWrapper";
-import { getProjects } from "@/lib/project";
+import Projects from "@/components/Projects";
+import { mockProjects } from "@/lib/mockData";
 
-export default async function ProjectPage() {
-  // const projects = await getProjects();
-
+export default function ProjectPage() {
   return (
     <MotionDivWrapper
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 2 }}
-      className="flex flex-col gap-10"
+      transition={{ duration: 0.5 }}
     >
-      <Description page="Projects" />
-      {/* <Projects projects={projects} /> */}
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold mb-8">项目展示</h1>
+        <Projects projects={mockProjects} />
+      </div>
     </MotionDivWrapper>
   );
 }

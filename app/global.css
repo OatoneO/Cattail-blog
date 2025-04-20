@@ -1,63 +1,81 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
-  /* :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+  /* Define self-hosted font */
+  @font-face {
+    font-family: 'Roboto Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/fonts/RobotoMono-Regular.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'Roboto Mono';
+    font-style: normal;
+    font-weight: 700; /* Example for bold */
+    font-display: swap;
+    src: url(/fonts/RobotoMono-Bold.woff2) format('woff2');
+  }
+
+  /* Light theme variables (default) */
+  :root {
+    --background: 0 0% 100%; /* white */
+    --foreground: 222.2 84% 4.9%; /* dark gray */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 222.2 84% 4.9%; /* dark gray */
+    --popover: 0 0% 100%; /* white */
+    --popover-foreground: 222.2 84% 4.9%; /* dark gray */
+    --primary: 222.2 47.4% 11.2%; /* darker blue */
+    --primary-foreground: 210 40% 98%; /* almost white */
+    --secondary: 210 40% 96.1%; /* light gray */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* darker blue */
+    --muted: 210 40% 96.1%; /* light gray */
+    --muted-foreground: 215.4 16.3% 46.9%; /* medium gray */
+    --accent: 210 40% 96.1%; /* light gray */
+    --accent-foreground: 222.2 47.4% 11.2%; /* darker blue */
+    --destructive: 0 84.2% 60.2%; /* red */
+    --destructive-foreground: 210 40% 98%; /* almost white */
+    --border: 214.3 31.8% 91.4%; /* light gray border */
+    --input: 214.3 31.8% 91.4%; /* light gray border */
+    --ring: 222.2 47.4% 11.2%; /* darker blue */
+    
+    --radius: 0.5rem;
+
+    /* Chart Colors (Light) - Adjust as needed */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+  }
+
+  /* Dark theme variables */
+  .dark {
+    --background: 222.2 84% 4.9%; /* dark gray */
+    --foreground: 210 40% 98%; /* almost white */
+    --card: 222.2 84% 4.9%; /* dark gray */
+    --card-foreground: 210 40% 98%; /* almost white */
+    --popover: 222.2 84% 4.9%; /* dark gray */
+    --popover-foreground: 210 40% 98%; /* almost white */
+    --primary: 210 40% 98%; /* almost white */
+    --primary-foreground: 222.2 47.4% 11.2%; /* darker blue */
+    --secondary: 217.2 32.6% 17.5%; /* slightly lighter dark gray */
+    --secondary-foreground: 210 40% 98%; /* almost white */
+    --muted: 217.2 32.6% 17.5%; /* slightly lighter dark gray */
+    --muted-foreground: 215 20.2% 65.1%; /* medium gray */
+    --accent: 217.2 32.6% 17.5%; /* slightly lighter dark gray */
+    --accent-foreground: 210 40% 98%; /* almost white */
+    --destructive: 0 62.8% 30.6%; /* dark red */
+    --destructive-foreground: 210 40% 98%; /* almost white */
+    --border: 217.2 32.6% 17.5%; /* slightly lighter dark gray */
+    --input: 217.2 32.6% 17.5%; /* slightly lighter dark gray */
+    --ring: 210 40% 98%; /* almost white */
+    
     --radius: 0.5rem;
-  } */
-  :root {
-    --background: 188.6 22.6% 6.1%;
-    --foreground: 180 1.7% 76.5%;
-    --card: 188.6 22.6% 6.1%;
-    --card-foreground: 180 1.7% 76.5%;
-    --popover: 188.6 22.6% 6.1%;
-    --popover-foreground: 180 1.7% 76.5%;
-    --muted: 0 0% 8.5%;
-    --muted-foreground: 0 0% 55%;
-    --primary: 180 1.7% 76.5%;
-    --primary-foreground: 186.7 22% 8%;
-    --secondary: 0 0% 94.9% / 5%;
 
-    /* not finished */
-    --secondary-foreground: 210 40% 98%;
-    --accent: 0 0% 14.5%;
-    --accent-foreground: 180 1.7% 76.5%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    /*  */
-
-    --border: 0 0% 55%;
-    --input: 0 0% 55%;
-
-    /* not finished */
-    --ring: 212.7 26.8% 83.9%;
-    /*  */
-
-    --radius: 0.75rem;
+    /* Chart Colors (Dark) - Adjust as needed */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -65,12 +83,13 @@
     --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-['Roboto_Mono'];
   }
 }
 

@@ -1,0 +1,62 @@
+---
+title: "Next.js 13新特性解析"
+publishedAt: "2024-04-06"
+tag: "Next.js"
+image: "/images/image_loading.jpeg"
+readTime: "15分钟"
+---
+
+# Next.js 13新特性解析
+
+Next.js 13 带来了许多激动人心的新特性，本文将详细介绍这些更新及其使用方法。
+
+## App Router
+
+App Router 是 Next.js 13 最重要的新特性之一，它提供了一种全新的路由系统：
+
+```jsx
+// app/page.js
+export default function Page() {
+  return <h1>Hello, Next.js 13!</h1>
+}
+```
+
+## Server Components
+
+Server Components 允许我们在服务器端渲染组件，减少客户端 JavaScript 的大小：
+
+```jsx
+// app/components/ServerComponent.js
+export default function ServerComponent() {
+  return <div>This is a server component</div>
+}
+```
+
+## Streaming
+
+Streaming 功能允许我们逐步渲染页面内容：
+
+```jsx
+// app/page.js
+import { Suspense } from 'react'
+
+export default function Page() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <SlowComponent />
+    </Suspense>
+  )
+}
+```
+
+## Turbopack
+
+Turbopack 是 Next.js 的新一代打包工具，提供更快的开发体验：
+
+```bash
+next dev --turbo
+```
+
+## 总结
+
+Next.js 13 的新特性大大提升了开发体验和性能。通过合理使用这些特性，我们可以构建更好的 Web 应用。 

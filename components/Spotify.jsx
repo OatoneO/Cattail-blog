@@ -12,7 +12,7 @@ export default async function Spotify() {
       <div className="flex justify-between mb-4">
         <div className="flex items-center mb-2 ">
           <MusicIcon className="w-10 h-10" />
-          <h2 className="text-sm font-semibold text-green-200 opacity-60">
+          <h2 className="text-sm font-semibold text-muted-foreground">
             RECENTLY PLAYED
           </h2>
         </div>

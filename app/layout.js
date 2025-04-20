@@ -1,15 +1,19 @@
 import "./global.css";
-import { Roboto_Mono } from "next/font/google";
+import "./fonts.css"; // 添加字体CSS引用
+// import { Roboto_Mono } from "next/font/google";
+import { ThemeProvider } from "next-themes";
 import ClerkProviderWrapper from "@/components/ClerkProviderWrapper";
-import Header from "@/components/Header";
+// import Header from "@/components/Header"; // Header might be removed or simplified
+import Navbar from "@/components/Navbar"; // Import Navbar
 import Footer from "@/components/Footer";
 import MainWrapper from "@/components/MainWrapper";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "sonner";
 
-const roboto_mono = Roboto_Mono({ subsets: ["latin"] });
+// const roboto_mono = Roboto_Mono({ subsets: ["latin"] });
 
+// 提供元数据
 export const metadata = {
   title: "Cattail | Developer",
   description:
@@ -19,19 +23,27 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en"
+      lang="zh"
+      suppressHydrationWarning
       className="scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-muted"
     >
       <ClerkProviderWrapper>
-        <body className={`${roboto_mono.className} bg-bg-image `}>
-          <div className="flex flex-col items-center px-4 pt-10 mx-auto max-w-4xl lg:max-w-5xl sm:px-12 md:px-20 lg:px-12 xl:max-w-7xl min-h-svh">
-            <Header />
-            <MainWrapper>{children}</MainWrapper>
-            <Footer />
-          </div>
-          <Analytics />
-          <SpeedInsights />
-          <Toaster />
+        <body className="bg-background text-foreground font-roboto-mono">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            <div className="flex flex-col items-center px-4 mx-auto max-w-4xl lg:max-w-5xl sm:px-12 md:px-20 lg:px-12 xl:max-w-7xl min-h-svh pt-4">
+              <MainWrapper>{children}</MainWrapper>
+              <Footer />
+            </div>
+            <Analytics />
+            <SpeedInsights />
+            <Toaster />
+          </ThemeProvider>
         </body>
       </ClerkProviderWrapper>
     </html>

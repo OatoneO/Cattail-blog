@@ -1,5 +1,5 @@
 import MotionDivWrapper from "@/components/MotionDivWrapper";
-// import { getBlogs } from "@/lib/blog";
+import { getBlogs } from "@/lib/blog";
 import Hero from "@/components/Hero";
 import SkillsBar from "@/components/SkillsBar";
 import RecentUpdate from "@/components/RecentUpdate";
@@ -9,34 +9,15 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function Page() {
-  // 使用模拟数据替代数据库数据
-  const mockBlogs = [
-    {
-      title: "示例博客 1",
-      description: "这是一个示例博客描述",
-      date: "2024-03-10",
-      slug: "example-1"
-    },
-    {
-      title: "示例博客 2",
-      description: "这是另一个示例博客描述",
-      date: "2024-03-09",
-      slug: "example-2"
-    },
-    {
-      title: "示例博客 3",
-      description: "这是第三个示例博客描述",
-      date: "2024-03-08",
-      slug: "example-3"
-    }
-  ];
-  const recentBlogs = mockBlogs.slice(0, 3);
+  // 获取博客数据
+  const blogs = await getBlogs();
+  const recentBlogs = blogs.slice(0, 3);
 
   return (
     <MotionDivWrapper
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 2 }}
+      transition={{ duration: 0.5 }} // 减少动画时间为0.5秒
     >
       <section className="w-full mb-20 lg:w-2/3 min-h-[calc(100svh-500px)] flex items-center gap-20">
         <Hero />

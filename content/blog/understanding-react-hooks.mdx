@@ -1,0 +1,68 @@
+---
+title: "深入理解React Hooks"
+publishedAt: "2024-04-07"
+tag: "React"
+image: "/images/image_loading.jpeg"
+readTime: "10分钟"
+---
+
+# 深入理解React Hooks
+
+React Hooks 是 React 16.8 引入的一个特性，它让我们可以在函数组件中使用状态和其他 React 特性。本文将深入探讨 React Hooks 的工作原理和最佳实践。
+
+## useState Hook
+
+useState 是最基础的 Hook，它允许我们在函数组件中添加状态：
+
+```jsx
+const [count, setCount] = useState(0);
+```
+
+## useEffect Hook
+
+useEffect 用于处理副作用，比如数据获取、订阅或者手动修改 DOM：
+
+```jsx
+useEffect(() => {
+  document.title = `Count: ${count}`;
+}, [count]);
+```
+
+## 自定义 Hooks
+
+我们可以创建自定义 Hooks 来复用状态逻辑：
+
+```jsx
+function useWindowSize() {
+  const [size, setSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return size;
+}
+```
+
+## 最佳实践
+
+1. 只在最顶层使用 Hooks
+2. 只在 React 函数组件中调用 Hooks
+3. 使用 ESLint 插件来强制执行 Hooks 规则
+4. 使用 useCallback 和 useMemo 来优化性能
+5. 使用 useRef 来保存可变值
+
+## 总结
+
+React Hooks 为我们提供了一种更简单、更直观的方式来管理组件状态和副作用。通过合理使用 Hooks，我们可以写出更清晰、更易维护的代码。 

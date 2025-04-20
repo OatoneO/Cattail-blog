@@ -1,0 +1,78 @@
+---
+title: "TypeScript高级技巧"
+publishedAt: "2024-04-05"
+tag: "TypeScript"
+image: "/images/image_loading.jpeg"
+readTime: "12分钟"
+---
+
+# TypeScript高级技巧
+
+TypeScript 提供了许多强大的类型系统特性，本文将分享一些实用的高级技巧。
+
+## 类型推导
+
+TypeScript 可以自动推导变量类型：
+
+```typescript
+const numbers = [1, 2, 3]; // number[]
+const mixed = [1, "two", 3]; // (string | number)[]
+```
+
+## 泛型
+
+泛型允许我们编写可重用的类型安全代码：
+
+```typescript
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+const num = identity<number>(42);
+const str = identity<string>("hello");
+```
+
+## 类型守卫
+
+类型守卫帮助我们缩小类型范围：
+
+```typescript
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+function processValue(value: unknown) {
+  if (isString(value)) {
+    // value 在这里是 string 类型
+    console.log(value.toUpperCase());
+  }
+}
+```
+
+## 高级类型
+
+### 映射类型
+
+```typescript
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+```
+
+### 条件类型
+
+```typescript
+type NonNullable<T> = T extends null | undefined ? never : T;
+```
+
+## 最佳实践
+
+1. 使用 `strict` 模式
+2. 避免使用 `any`
+3. 优先使用接口而不是类型别名
+4. 使用类型断言时要谨慎
+5. 利用 TypeScript 的类型推导能力
+
+## 总结
+
+掌握这些 TypeScript 高级技巧可以帮助我们写出更健壮、更易维护的代码。 
