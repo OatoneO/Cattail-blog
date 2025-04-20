@@ -78,6 +78,7 @@ export default function KnowledgeGraph() {
   const gRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const initialRenderRef = useRef(true);
+  const [themeColors, setThemeColors] = useState({ foreground: 'hsl(0 0% 100%)', secondaryForeground: 'hsl(240 3.7% 46.1%)' }); // Default light theme
 
   // 防抖搜索函数
   const debouncedSearch = debounce((query: string) => {
@@ -161,6 +162,12 @@ export default function KnowledgeGraph() {
       console.log('SVG 引用未找到，退出渲染');
       return;
     }
+
+    // 获取当前主题颜色
+    const computedStyle = getComputedStyle(document.documentElement);
+    const foreground = computedStyle.getPropertyValue('--foreground').trim();
+    const secondaryForeground = computedStyle.getPropertyValue('--secondary-foreground').trim() || foreground; // Fallback
+    setThemeColors({ foreground: `hsl(${foreground})`, secondaryForeground: `hsl(${secondaryForeground})` });
 
     // 清除之前的状态
     setIsLoading(true);
@@ -259,8 +266,8 @@ export default function KnowledgeGraph() {
           .data(allRelationships)
           .join('line')
           .attr('class', 'link')
-          .style('stroke', 'rgba(255, 255, 255, 0.2)')
-          .style('stroke-opacity', 0.6)
+          .style('stroke', themeColors.secondaryForeground)
+          .style('stroke-opacity', 0.3)
           .style('stroke-width', 1);
 
         // 创建节点组
@@ -273,7 +280,7 @@ export default function KnowledgeGraph() {
         node.append('circle')
           .attr('r', 6)
           .style('fill', (d, i) => getRandomColor())
-          .style('stroke', '#fff')
+          .style('stroke', themeColors.foreground)
           .style('stroke-width', 1)
           .style('opacity', 0.8)
           .on('click', (event, d) => {
@@ -321,7 +328,7 @@ export default function KnowledgeGraph() {
           .attr('dy', '.35em')
           .text(d => d.label)
           .style('font-size', '10px')
-          .style('fill', '#fff')
+          .style('fill', themeColors.foreground)
           .style('opacity', 0.7)
           .style('text-shadow', '0 0 3px rgba(0,0,0,0.5)')
           .style('cursor', 'pointer')
@@ -362,7 +369,7 @@ export default function KnowledgeGraph() {
               .style('stroke-opacity', d => {
                 const sourceZ = (d.source as Node).z || 0;
                 const targetZ = (d.target as Node).z || 0;
-                return Math.min(1, Math.max(0.1, (1000 - Math.min(sourceZ, targetZ)) / 1000));
+                return Math.min(0.8, Math.max(0.1, ((1000 - Math.min(sourceZ, targetZ)) / 1000) * 0.5 + 0.1));
               });
           });
         };
@@ -432,24 +439,24 @@ export default function KnowledgeGraph() {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative w-[80vw] max-w-2xl">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
         <input
           type="text"
           placeholder="搜索节点..."
           value={searchQuery}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 bg-black/50 border-gray-700 text-white placeholder:text-gray-400 rounded-md border border-input px-3 py-2"
+          className="w-full pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground rounded-md border px-3 py-2"
         />
       </div>
-      <div className="relative w-[80vw] h-[60vh] bg-black" style={{ backgroundImage: 'url(/images/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="relative w-[80vw] h-[60vh] bg-background border border-border rounded-md overflow-hidden">
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 z-10">
-            <div className="text-white text-xl">加载知识图谱中...</div>
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+            <div className="text-foreground text-xl">加载知识图谱中...</div>
           </div>
         )}
         {error && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 z-10">
-            <div className="text-red-500 text-xl mb-4">{error}</div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10">
+            <div className="text-destructive-foreground text-xl mb-4">{error}</div>
             <button
               onClick={() => {
                 setError(null);
