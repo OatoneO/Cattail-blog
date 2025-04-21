@@ -81,15 +81,22 @@ export async function importData(data: GraphData, type: 'css' | 'html' = 'css') 
 
   const session = driver.session();
   try {
-    console.log(`清除现有${type.toUpperCase()}数据...`);
-    // 清除现有数据
-    await session.run(`MATCH (n:${type.toUpperCase()}Concept) DETACH DELETE n`);
+    // 确定正确的节点标签
+    // HTML节点类型在JSON中可能是html_concept，但我们在Neo4j中将其规范化为HTMLConcept
+    const nodeLabel = type.toUpperCase() + 'Concept';
     
-    console.log(`创建${type.toUpperCase()}节点...`);
+    console.log(`清除现有${nodeLabel}数据...`);
+    // 清除现有数据
+    await session.run(`MATCH (n:${nodeLabel}) DETACH DELETE n`);
+    
+    console.log(`创建${nodeLabel}节点...`);
     // 创建节点
     for (const node of data.nodes) {
+      // 检查节点类型是否与预期相符
+      console.log(`节点类型: ${node.type}, 预期类型: ${type}_concept`);
+      
       await session.run(
-        `CREATE (n:${type.toUpperCase()}Concept {
+        `CREATE (n:${nodeLabel} {
           id: $id,
           type: $type,
           title: $title,
@@ -108,15 +115,15 @@ export async function importData(data: GraphData, type: 'css' | 'html' = 'css') 
       );
     }
     
-    console.log(`创建${type.toUpperCase()}关系...`);
+    console.log(`创建${nodeLabel}关系...`);
     // 创建关系（基于类别）
     await session.run(`
-      MATCH (a:${type.toUpperCase()}Concept), (b:${type.toUpperCase()}Concept)
+      MATCH (a:${nodeLabel}), (b:${nodeLabel})
       WHERE a.category = b.category AND a.id <> b.id
       CREATE (a)-[r:RELATED_TO]->(b)
     `);
     
-    return { message: `${type.toUpperCase()}数据导入成功` };
+    return { message: `${nodeLabel}数据导入成功` };
   } catch (error) {
     console.error(`导入${type.toUpperCase()}数据错误:`, error);
     throw new Error(`导入${type.toUpperCase()}数据失败`);
@@ -129,10 +136,13 @@ export async function getGraphData(type: 'css' | 'html' = 'css'): Promise<ApiGra
   console.log(`Neo4j 服务: 开始获取${type.toUpperCase()}图谱数据`);
   const session = driver.session();
   try {
-    console.log('执行 Neo4j 查询...');
+    // 确定正确的节点标签
+    const nodeLabel = type.toUpperCase() + 'Concept';
+    
+    console.log(`执行 Neo4j 查询 (节点标签: ${nodeLabel})...`);
     const result = await session.run(`
-      MATCH (n:${type.toUpperCase()}Concept)
-      OPTIONAL MATCH (n)-[r]->(m:${type.toUpperCase()}Concept)
+      MATCH (n:${nodeLabel})
+      OPTIONAL MATCH (n)-[r]->(m:${nodeLabel})
       RETURN n, collect(DISTINCT { type: type(r), target: m.id }) as relationships
     `);
     

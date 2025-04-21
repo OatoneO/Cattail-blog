@@ -33,13 +33,35 @@ async function importData() {
       console.log(`准备导入${type}数据...`);
       console.log(`数据包含: ${data.nodes.length} 个节点`);
       
+      // 检查节点类型是否正确
+      const expectedType = `${type}_concept`;
+      let hasTypeIssue = false;
+      
+      // 验证节点类型并规范化
+      data.nodes.forEach(node => {
+        console.log(`节点ID: ${node.id}, 节点类型: ${node.type}`);
+        if (node.type !== expectedType) {
+          console.log(`节点 ${node.id} 类型不匹配，预期: ${expectedType}, 实际: ${node.type}`);
+          node.type = expectedType;
+          hasTypeIssue = true;
+        }
+      });
+      
+      if (hasTypeIssue) {
+        console.log(`检测到节点类型问题，已修正为 ${expectedType}`);
+      }
+      
       // 发送数据到导入API
       const response = await fetch('http://localhost:3000/api/import-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...data, type }),
+        body: JSON.stringify({ 
+          nodes: data.nodes, 
+          relationships: data.relationships || [], 
+          type 
+        }),
       });
 
       if (!response.ok) {
@@ -57,4 +79,5 @@ async function importData() {
   }
 }
 
-importData(); 
+// 执行导入
+importData();
