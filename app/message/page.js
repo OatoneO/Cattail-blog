@@ -30,7 +30,7 @@ export default async function MessagePage() {
           </MessageForm>
         ) : (
           <div className="flex items-center justify-start h-20 px-10 pr-2 text-sm rounded-lg bg-secondary text-muted-foreground">
-            🔒 Please log in to leave a message
+            🔒 请登录后留言
           </div>
         )}
       </Suspense>

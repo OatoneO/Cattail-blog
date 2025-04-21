@@ -26,7 +26,6 @@ export default function Navbar() {
   const adminNavigationItems = [
     { href: "/admin/blogs", key: "adminBlogs", label: "博客管理" },
     { href: "/admin/projects", key: "adminProjects", label: "项目管理" },
-    { href: "/admin/settings", key: "adminSettings", label: "设置" },
   ];
 
   const allNavItems = isSignedIn ? [...navigationItems, ...adminNavigationItems] : navigationItems;

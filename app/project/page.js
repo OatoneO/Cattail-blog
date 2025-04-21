@@ -2,6 +2,9 @@ import MotionDivWrapper from "@/components/MotionDivWrapper";
 import Projects from "@/components/Projects";
 import { mockProjects } from "@/lib/mockData";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function ProjectPage() {
   return (
     <MotionDivWrapper

@@ -17,9 +17,9 @@ export default function MessageForm({ children }) {
         try {
           await createMessage(formData);
           setText("");
-          toast.success("Message sent successfully");
+          toast.success("留言发送成功");
         } catch (error) {
-          toast.error(error.message || "Failed to send message");
+          toast.error(error.message || "发送留言失败");
         }
       }}
     >
@@ -40,7 +40,7 @@ function MessageInput({ text, setText, isEmpty }) {
       <TextareaAutosize
         disabled={pending}
         className="p-0 w-full text-sm bg-transparent border-none outline-none resize-none placeholder-muted-foreground text-muted-foreground disabled:opacity-50"
-        placeholder="Cattail‘s Knowledge Graph is under development, please stay tuned"
+        placeholder="在这里留言，分享您的想法和建议..."
         name="message"
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -57,7 +57,7 @@ function MessageInput({ text, setText, isEmpty }) {
           className="flex items-center justify-center gap-1.5"
         >
           <Send size={15} />
-          <span className="font-bold">Send</span>
+          <span className="font-bold">发送</span>
         </button>
       </div>
     </div>

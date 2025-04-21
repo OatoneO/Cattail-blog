@@ -12,7 +12,7 @@ export default function PreviewBlogPage() {
   const title = searchParams.get("title") || "博客标题";
   const summary = searchParams.get("summary") || "博客摘要";
   const image = searchParams.get("image") || "/images/default-blog.png";
-  const author = searchParams.get("author") || "Zephyr";
+  const author = searchParams.get("author") || "Cattail";
   const publishedAt = searchParams.get("publishedAt") || new Date().toISOString().split('T')[0];
   const tag = searchParams.get("tag") || "General";
   const content = searchParams.get("content") || "博客内容";
