@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { mockProjects } from "@/lib/mockData";
+import { getProjectById } from "@/lib/db/project-service";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import MotionDivWrapper from "@/components/MotionDivWrapper";
 
-export default function ProjectDetailPage({ params }) {
-  const project = mockProjects.find(p => p._id === params.id);
+export default async function ProjectDetailPage({ params }) {
+  const project = await getProjectById(params.id);
 
   if (!project) {
     notFound();

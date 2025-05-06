@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { mockProjects } from "@/lib/mockData";
 
 export default function ProjectForm({ projectData }) {
   const router = useRouter();
@@ -18,7 +17,7 @@ export default function ProjectForm({ projectData }) {
     description: "",
     link: "",
     imageUrl: "",
-    tags: ""
+    technologies: []
   });
 
   useEffect(() => {
@@ -29,7 +28,7 @@ export default function ProjectForm({ projectData }) {
         description: projectData.description || "",
         link: projectData.link || "",
         imageUrl: projectData.imageUrl || "",
-        tags: Array.isArray(projectData.tags) ? projectData.tags.join(", ") : projectData.tags || ""
+        technologies: Array.isArray(projectData.technologies) ? projectData.technologies : []
       });
     }
   }, [projectData]);
@@ -47,56 +46,46 @@ export default function ProjectForm({ projectData }) {
     setIsSubmitting(true);
 
     try {
-      // 模拟提交延迟
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
       // 将标签字符串转换为数组
-      const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean);
+      const technologies = formData.technologies.split(',').map(tech => tech.trim()).filter(Boolean);
       
-      if (projectData && projectData.id) {
-        // 更新现有项目
-        const projectIndex = mockProjects.findIndex(p => (p._id === projectData.id || p.id === projectData.id));
-        
-        if (projectIndex !== -1) {
-          // 在内存中"更新"模拟数据
-          mockProjects[projectIndex] = {
-            ...mockProjects[projectIndex],
-            title: formData.title,
-            description: formData.description,
-            link: formData.link,
-            imageUrl: formData.imageUrl,
-            technologies: tagsArray // 使用technologies字段存储标签
-          };
-          
-          console.log('模拟更新项目:', mockProjects[projectIndex]);
-        }
-      } else {
-        // 创建新项目
-        const newProject = {
-          _id: Date.now().toString(), // 生成唯一ID
-          title: formData.title,
-          description: formData.description,
-          link: formData.link,
-          imageUrl: formData.imageUrl || "/images/image_loading.jpeg",
-          technologies: tagsArray
-        };
-        
-        // 添加到模拟数据数组
-        mockProjects.unshift(newProject);
-        console.log('模拟创建新项目:', newProject);
+      const data = {
+        title: formData.title,
+        description: formData.description,
+        link: formData.link,
+        imageUrl: formData.imageUrl,
+        technologies
+      };
+
+      const url = projectData?.id 
+        ? `/api/projects/${projectData.id}`
+        : '/api/projects';
+      
+      const method = projectData?.id ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('提交失败');
       }
-      
-      // 显示成功提示
+
       toast.success(projectData ? "项目已更新" : "项目已创建");
       
       // 等待提示显示后立即跳转
       setTimeout(() => {
         router.push("/admin/projects");
-        router.refresh(); // 强制刷新页面
+        router.refresh();
       }, 200);
     } catch (error) {
       console.error("Error submitting project:", error);
       toast.error("提交失败，请重试");
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -155,11 +144,11 @@ export default function ProjectForm({ projectData }) {
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="tags">标签（用逗号分隔）</Label>
+        <Label htmlFor="technologies">技术栈（用逗号分隔）</Label>
         <Input
-          id="tags"
-          name="tags"
-          value={formData.tags}
+          id="technologies"
+          name="technologies"
+          value={Array.isArray(formData.technologies) ? formData.technologies.join(', ') : formData.technologies}
           onChange={handleChange}
           placeholder="React, Next.js, TypeScript"
         />

@@ -4,6 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+function formatDate(dateString) {
+  if (!dateString) return "";
+  return new Date(dateString).toLocaleDateString("zh-CN");
+}
+
 export default function Blogs({ blogs }) {
   const [imageErrors, setImageErrors] = useState({});
 
@@ -34,7 +39,7 @@ export default function Blogs({ blogs }) {
                 <div>
                   <h2 className="mb-2 font-bold">{blog.title}</h2>
                   <p className="text-sm text-muted-foreground">
-                    {blog.publishedAt} | {blog.tag} · {blog.readTime}
+                    {formatDate(blog.publishedAt)} | {blog.tag} · {blog.readTime}
                   </p>
                 </div>
                 <p className="text-sm">{blog.summary}</p>

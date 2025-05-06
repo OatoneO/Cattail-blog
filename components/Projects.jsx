@@ -19,17 +19,17 @@ export default function Projects({ projects }) {
     <section>
       <ul className="grid w-full grid-cols-1 gap-5 mx-auto sm:grid-cols-2 xl:grid-cols-3">
         {projects.map((project) => (
-          <li key={project._id}>
+          <li key={project.id}>
             <Link href={project.link} target="_blank">
               <div className="relative flex flex-col items-start justify-center gap-6 p-5 border-dashed border-[0.8px] border-transparent rounded-2xl hover:border-muted-foreground hover:bg-muted">
                 <div className="relative flex items-center justify-center w-12 h-12 shadow-[0_0px_3px_rgb(180,180,180)] rounded-full">
                   <Image
-                    src={imageErrors[project._id] ? "/images/image_loading.jpeg" : project.imageUrl}
+                    src={imageErrors[project.id] ? "/images/image_loading.jpeg" : project.imageUrl}
                     alt={project.title}
                     width={36}
                     height={36}
                     className="object-contain"
-                    onError={() => handleImageError(project._id)}
+                    onError={() => handleImageError(project.id)}
                   />
                 </div>
 

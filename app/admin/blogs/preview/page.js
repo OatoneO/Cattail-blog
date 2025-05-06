@@ -11,7 +11,7 @@ export default function PreviewBlogPage() {
   // 从URL查询参数中解析博客数据
   const title = searchParams.get("title") || "博客标题";
   const summary = searchParams.get("summary") || "博客摘要";
-  const image = searchParams.get("image") || "/images/default-blog.png";
+  const image = searchParams.get("image") || "/images/loading.jpg";
   const author = searchParams.get("author") || "Cattail";
   const publishedAt = searchParams.get("publishedAt") || new Date().toISOString().split('T')[0];
   const tag = searchParams.get("tag") || "General";

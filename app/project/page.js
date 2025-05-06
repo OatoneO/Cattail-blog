@@ -1,11 +1,12 @@
 import MotionDivWrapper from "@/components/MotionDivWrapper";
 import Projects from "@/components/Projects";
-import { mockProjects } from "@/lib/mockData";
+import { getAllProjects } from "@/lib/db/project-service";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
-export default function ProjectPage() {
+export default async function ProjectPage() {
+  const projects = await getAllProjects();
+  
   return (
     <MotionDivWrapper
       initial={{ opacity: 0 }}
@@ -14,7 +15,7 @@ export default function ProjectPage() {
     >
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8">项目展示</h1>
-        <Projects projects={mockProjects} />
+        <Projects projects={projects} />
       </div>
     </MotionDivWrapper>
   );

@@ -5,6 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+function formatDate(dateString) {
+  if (!dateString) return "";
+  return new Date(dateString).toLocaleDateString("zh-CN");
+}
+
 export default function RecentUpdate({ blogs }) {
   const [imageErrors, setImageErrors] = useState({});
 
@@ -39,7 +44,7 @@ export default function RecentUpdate({ blogs }) {
                 <div className="absolute bottom-0 left-0 right-0 p-4 rounded-lg backdrop-blur-3xl">
                   <h2 className="mb-2 font-bold">{blog.title}</h2>
                   <p className="mb-4 text-sm text-muted-foreground">
-                    {blog.publishedAt} | {blog.tag} · {blog.readTime}
+                    {formatDate(blog.publishedAt)} | {blog.tag} · {blog.readTime}
                   </p>
                   <p className="text-sm text-transparent bg-gradient-to-l from-muted-foreground via-foreground to-muted-foreground bg-clip-text">
                     {blog.summary}

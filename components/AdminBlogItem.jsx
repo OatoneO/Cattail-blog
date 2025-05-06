@@ -42,7 +42,7 @@ export default function AdminBlogItem({ blog }) {
     <div className="flex flex-col sm:flex-row items-stretch gap-4 p-4 border border-border rounded-lg hover:bg-muted/30">
       <div className="relative aspect-[16/9] sm:w-48 rounded-md overflow-hidden">
         <Image
-          src={imageError ? "/images/image_loading.jpeg" : blog.image || "/images/default-blog.png"}
+          src={imageError ? "/images/image_loading.jpeg" : blog.image || "/images/loading.jpg"}
           alt={blog.title}
           fill
           className="object-cover"

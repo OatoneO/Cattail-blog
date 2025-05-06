@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getBlogBySlug, getBlogs } from "@/lib/blog";
+import { getBlogBySlug, getAllBlogs } from "@/lib/db/blog-service";
 
 export default async function Blog({ params }) {
   const { slug } = params;
@@ -13,8 +13,8 @@ export default async function Blog({ params }) {
     notFound();
   }
 
-  const { metadata, content } = blog;
-  const { title, summary, image, author, publishedAt, tag } = metadata;
+  const { title, content, summary, author, publishedAt, tag, images } = blog;
+  const image = images[0]?.url || '/images/loading.jpg';
 
   return (
     <section className="flex pr-8 mx-auto">
@@ -42,7 +42,7 @@ export default async function Blog({ params }) {
           )}
 
           <p className="mb-2 text-sm text-muted-foreground">
-            {publishedAt ?? ""} | {tag}
+            {publishedAt} | {tag}
           </p>
 
           <h1 className="mb-2 text-4xl font-bold">{title}</h1>
@@ -61,8 +61,8 @@ export default async function Blog({ params }) {
 }
 
 export async function generateStaticParams() {
-  const posts = await getBlogs();
-  return posts.map((post) => ({
-    slug: post.slug,
+  const blogs = await getAllBlogs();
+  return blogs.map((blog) => ({
+    slug: blog.slug,
   }));
 }
