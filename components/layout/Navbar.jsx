@@ -5,10 +5,10 @@ import { UserButton, useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "./ThemeToggle";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { MobileMenu } from "./MobileMenu";
 import { GithubIcon } from "lucide-react";
-import SocialMediaLink from "./SocialMediaLink";
+import SocialMediaLink from "@/components/common/SocialMediaLink";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);

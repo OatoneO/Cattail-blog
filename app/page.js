@@ -1,10 +1,10 @@
-import MotionDivWrapper from "@/components/MotionDivWrapper";
+import MotionDivWrapper from "@/components/common/MotionDivWrapper";
 import { getBlogs } from "@/lib/blog";
-import Hero from "@/components/Hero";
-import SkillsBar from "@/components/SkillsBar";
-import RecentUpdate from "@/components/RecentUpdate";
-import BasisInfo from "@/components/BasicInfo";
-// import Spotify from "@/components/Spotify";
+import Hero from "@/components/common/Hero";
+import SkillsBar from "@/components/common/SkillsBar";
+import RecentUpdate from "@/components/common/RecentUpdate";
+import BasisInfo from "@/components/common/BasicInfo";
+// import Spotify from "@/components/common/Spotify";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 

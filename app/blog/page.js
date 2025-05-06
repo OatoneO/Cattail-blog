@@ -1,5 +1,5 @@
-import MotionDivWrapper from "@/components/MotionDivWrapper";
-import Blogs from "@/components/Blogs";
+import MotionDivWrapper from "@/components/common/MotionDivWrapper";
+import Blogs from "@/components/blog/Blogs";
 import { getAllBlogs } from "@/lib/db/blog-service";
 
 export const dynamic = "force-dynamic";

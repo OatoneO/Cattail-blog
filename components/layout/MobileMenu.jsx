@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 export function MobileMenu({ navItems }) {
   const [isOpen, setIsOpen] = React.useState(false);

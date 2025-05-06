@@ -1,13 +1,14 @@
-import MessageForm from "@/components/MessageForm";
-
-import { currentUser } from "@clerk/nextjs/server";
-import { Suspense } from "react";
+import MessageForm from "@/components/common/MessageForm";
 import {
+  LoadingState,
+  LoadingStateMessage,
   GuestBookFormLoading,
   LoadingMessages,
-} from "@/components/LoadingState";
-import Messages from "@/components/Messages";
-import MessageDescription from "@/components/MessageDescription";
+} from "@/components/common/LoadingState";
+import Messages from "@/components/common/Messages";
+import MessageDescription from "@/components/common/MessageDescription";
+import { currentUser } from "@clerk/nextjs/server";
+import { Suspense } from "react";
 import Image from "next/image";
 
 export default async function MessagePage() {

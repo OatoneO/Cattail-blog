@@ -1,5 +1,5 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 
 export default function SignInAndOut({ pathname }) {

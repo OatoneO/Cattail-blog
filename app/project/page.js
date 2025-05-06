@@ -1,5 +1,5 @@
-import MotionDivWrapper from "@/components/MotionDivWrapper";
-import Projects from "@/components/Projects";
+import MotionDivWrapper from "@/components/common/MotionDivWrapper";
+import Projects from "@/components/project/Projects";
 import { getAllProjects } from "@/lib/db/project-service";
 
 export const dynamic = "force-dynamic";

@@ -2,11 +2,11 @@ import "./global.css";
 import "./fonts.css"; // 添加字体CSS引用
 // import { Roboto_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import ClerkProviderWrapper from "@/components/ClerkProviderWrapper";
+import ClerkProviderWrapper from "@/components/layout/ClerkProviderWrapper";
 // import Header from "@/components/Header"; // Header might be removed or simplified
-import Navbar from "@/components/Navbar"; // Import Navbar
-import Footer from "@/components/Footer";
-import MainWrapper from "@/components/MainWrapper";
+import Navbar from "@/components/layout/Navbar"; // Import Navbar
+import Footer from "@/components/layout/Footer";
+import MainWrapper from "@/components/layout/MainWrapper";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "sonner";

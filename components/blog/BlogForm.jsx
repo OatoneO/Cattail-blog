@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import ImageUpload from "@/components/ImageUpload";
+import ImageUpload from "@/components/common/ImageUpload";
 import { Eye } from "lucide-react";
 
 export default function BlogForm({ blogData }) {
