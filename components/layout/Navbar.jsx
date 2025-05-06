@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import { UserButton, useAuth, SignInButton } from "@clerk/nextjs";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -9,10 +9,11 @@ import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { MobileMenu } from "./MobileMenu";
 import { GithubIcon } from "lucide-react";
 import SocialMediaLink from "@/components/common/SocialMediaLink";
+import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, userId } = useAuth();
   const pathname = usePathname();
 
   const navigationItems = [
@@ -28,7 +29,8 @@ export default function Navbar() {
     { href: "/admin/projects", key: "adminProjects", label: "项目管理" },
   ];
 
-  const allNavItems = isSignedIn ? [...navigationItems, ...adminNavigationItems] : navigationItems;
+  const isAdmin = userId === "user_2vxec51JBR7zN12XcPs7FGKksT8";
+  const allNavItems = isSignedIn && isAdmin ? [...navigationItems, ...adminNavigationItems] : navigationItems;
 
   return (
     <nav className="z-20 container inset-x-0 top-0 bg-background/80 backdrop-blur border-b border-border py-2 mb-4">
@@ -52,7 +54,7 @@ export default function Navbar() {
               {item.label}
             </Link>
           ))}
-          {isSignedIn && adminNavigationItems.map((item) => (
+          {isSignedIn && isAdmin && adminNavigationItems.map((item) => (
             <Link
               key={item.key}
               href={item.href}
@@ -73,7 +75,13 @@ export default function Navbar() {
 
           {/* GitHub Link for Desktop */}
           <div className="hidden md:block">
-            <UserButton />
+            {isSignedIn ? (
+              <UserButton />
+            ) : (
+              <SignInButton mode="modal">
+                <Button variant="outline">登录</Button>
+              </SignInButton>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}

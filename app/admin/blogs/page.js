@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AdminBlogItem from "@/components/AdminBlogItem";
+import AdminBlogItem from "@/components/blog/AdminBlogItem";
 import { getBlogs } from "@/lib/blog";
 
 export const dynamic = "force-dynamic";
