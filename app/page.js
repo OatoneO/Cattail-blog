@@ -1,5 +1,5 @@
 import MotionDivWrapper from "@/components/common/MotionDivWrapper";
-import { getBlogs } from "@/lib/blog";
+import { getAllBlogs } from "@/lib/db/blog-service";
 import Hero from "@/components/common/Hero";
 import SkillsBar from "@/components/common/SkillsBar";
 import RecentUpdate from "@/components/common/RecentUpdate";
@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function Page() {
   // 获取博客数据
-  const blogs = await getBlogs();
+  const blogs = await getAllBlogs();
   const recentBlogs = blogs.slice(0, 3);
 
   return (

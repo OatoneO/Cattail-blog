@@ -2,13 +2,13 @@ import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminBlogItem from "@/components/blog/AdminBlogItem";
-import { getBlogs } from "@/lib/blog";
+import { getAllBlogs } from "@/lib/db/blog-service";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function AdminBlogsPage() {
-  const blogs = await getBlogs();
+  const blogs = await getAllBlogs();
 
   return (
     <div>

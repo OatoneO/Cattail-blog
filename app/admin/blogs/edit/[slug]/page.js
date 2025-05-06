@@ -1,8 +1,8 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import BlogForm from "@/components/BlogForm";
-import { getBlogBySlug } from "@/lib/blog";
+import BlogForm from "@/components/blog/BlogForm";
+import { getBlogBySlug } from "@/lib/db/blog-service";
 
 export default async function EditBlogPage({ params }) {
   const { slug } = params;

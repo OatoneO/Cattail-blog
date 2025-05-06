@@ -29,14 +29,14 @@ export default function BlogForm({ blogData }) {
   useEffect(() => {
     if (blogData) {
       setFormData({
-        slug: blogData.metadata.slug || "",
-        title: blogData.metadata.title || "",
-        summary: blogData.metadata.summary || "",
-        image: blogData.metadata.image || "/images/loading.jpg",
-        author: blogData.metadata.author || "Cattail",
-        publishedAt: blogData.metadata.publishedAt || new Date().toISOString().split('T')[0],
-        tag: blogData.metadata.tag || "General",
-        readTime: blogData.metadata.readTime || "3 min read",
+        slug: blogData.slug || "",
+        title: blogData.title || "",
+        summary: blogData.summary || "",
+        image: blogData.image || "/images/loading.jpg",
+        author: blogData.author || "Cattail",
+        publishedAt: blogData.publishedAt || new Date().toISOString().split('T')[0],
+        tag: blogData.tag || "General",
+        readTime: blogData.readTime || "3 min read",
         content: blogData.content || ""
       });
     }
@@ -67,7 +67,7 @@ export default function BlogForm({ blogData }) {
         toast.success("博客保存成功！");
         router.push("/admin/blogs");
       } else {
-        toast.error("保存失败，请重试。");
+        toast.error(result.error || "保存失败，请重试。");
       }
     } catch (error) {
       console.error("Error saving blog:", error);

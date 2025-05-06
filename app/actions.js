@@ -3,9 +3,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { saveBlog, deleteBlog } from "@/lib/blog";
 import { saveProject, deleteProject } from "@/lib/project";
 import { redirect } from "next/navigation";
+import { createBlog, updateBlog, deleteBlog } from "@/lib/db/blog-service";
 
 export async function createMessage(formData) {
   const user = await currentUser();
@@ -32,29 +32,38 @@ export async function createMessage(formData) {
 
 // 博客相关操作
 export async function createOrUpdateBlog(formData) {
-  const metadata = {
+  const blogData = {
     title: formData.get("title"),
     summary: formData.get("summary"),
     image: formData.get("image"),
     author: formData.get("author"),
     publishedAt: formData.get("publishedAt") || new Date().toISOString().split('T')[0],
     tag: formData.get("tag"),
-    readTime: formData.get("readTime") || "3 min read"
+    readTime: formData.get("readTime") || "3 min read",
+    content: formData.get("content")
   };
   
-  const content = formData.get("content");
   const slug = formData.get("slug");
   
-  await saveBlog({ slug, content, metadata });
-  
-  revalidatePath("/blog");
-  revalidatePath("/");
-  
-  if (slug) {
-    revalidatePath(`/blog/${slug}`);
+  try {
+    if (slug) {
+      await updateBlog(slug, blogData);
+    } else {
+      await createBlog(blogData);
+    }
+    
+    revalidatePath("/blog");
+    revalidatePath("/");
+    
+    if (slug) {
+      revalidatePath(`/blog/${slug}`);
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving blog:", error);
+    return { success: false, error: error.message };
   }
-  
-  return { success: true };
 }
 
 export async function removeBlog(formData) {
@@ -64,12 +73,17 @@ export async function removeBlog(formData) {
     return { success: false, error: "Slug is required" };
   }
   
-  const result = await deleteBlog(slug);
-  
-  revalidatePath("/blog");
-  revalidatePath("/");
-  
-  return { success: result };
+  try {
+    await deleteBlog(slug);
+    
+    revalidatePath("/blog");
+    revalidatePath("/");
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting blog:", error);
+    return { success: false, error: error.message };
+  }
 }
 
 // 项目相关操作
