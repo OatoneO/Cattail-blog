@@ -11,7 +11,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default async function Page() {
   // 获取博客数据
   const blogs = await getAllBlogs();
-  const recentBlogs = blogs.slice(0, 3);
+  const recentBlogs = blogs.slice(0, 3).map(blog => ({
+    ...blog,
+    image: blog.images?.[0]?.url || '/images/loading.jpg'
+  }));
 
   return (
     <MotionDivWrapper

@@ -36,17 +36,17 @@ export default function RecentUpdate({ blogs }) {
                     src={imageErrors[blog.slug] ? "/images/image_loading.jpeg" : blog.image}
                     alt={blog.title}
                     fill
-                    className="object-contain rounded-2xl"
+                    className="object-cover rounded-2xl"
                     onError={() => handleImageError(blog.slug)}
                   />
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 p-4 rounded-lg backdrop-blur-3xl">
-                  <h2 className="mb-2 font-bold">{blog.title}</h2>
-                  <p className="mb-4 text-sm text-muted-foreground">
+                <div className="absolute bottom-0 left-0 right-0 p-4 rounded-lg backdrop-blur-xl bg-black/40">
+                  <h2 className="mb-2 font-bold text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">{blog.title}</h2>
+                  <p className="mb-4 text-sm text-white/90 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                     {formatDate(blog.publishedAt)} | {blog.tag} · {blog.readTime}
                   </p>
-                  <p className="text-sm text-transparent bg-gradient-to-l from-muted-foreground via-foreground to-muted-foreground bg-clip-text">
+                  <p className="text-sm text-white/90 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                     {blog.summary}
                   </p>
                 </div>
