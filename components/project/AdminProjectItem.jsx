@@ -43,12 +43,12 @@ export default function AdminProjectItem({ project }) {
 
   return (
     <div className="flex flex-col sm:flex-row items-stretch gap-4 p-4 border border-border rounded-lg hover:bg-muted/30">
-      <div className="relative aspect-[16/9] sm:w-48 rounded-md overflow-hidden">
+      <div className="relative aspect-square sm:w-48 rounded-md overflow-hidden">
         <Image
           src={imageError ? "/images/image_loading.jpeg" : project.imageUrl || "/images/default-project.png"}
           alt={project.title}
           fill
-          className="object-cover"
+          className="object-contain"
           onError={() => setImageError(true)}
         />
       </div>
