@@ -43,7 +43,7 @@ export default function BlogList({ blogs }) {
               <td className="px-4 py-2">
                 <div className="flex gap-2">
                   <Link
-                    href={`/admin/blog/edit/${blog.slug}`}
+                    href={`/admin/blogs/edit/${blog.slug}`}
                     className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
                   >
                     <Edit2 className="w-4 h-4" />
