@@ -52,7 +52,10 @@ export default async function Page() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <section className="w-full mb-20 min-h-[calc(100svh-500px)] flex items-center gap-20">
+      <p className="text-transparent text-center sm:bg-gradient-to-r to-foreground from-blue-500 via-purple-500 to-red-500 bg-gradient-to-t bg-clip-text lg:text-[54px] text-[40px] animate-text">
+    欢迎来到Cattail的数字花园
+</p>
+      <section className="w-full min-h-[calc(100svh-500px)] flex items-center gap-20">
         <div className="w-2/3">
           <Hero />
         </div>
