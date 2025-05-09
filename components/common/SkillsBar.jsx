@@ -20,7 +20,7 @@ export default function SkillsBar() {
   return (
     <div className="flex flex-col w-full gap-6 px-6 py-4 shadow-[0_0px_1.2px_rgb(140,140,140)] rounded-lg ">
       <h2 className="text-lg text-muted-foreground">
-        ⚙️ <span className="text-muted-foreground">Tech Stack</span>
+        ⚙️ <span className="text-muted-foreground">技术栈</span>
       </h2>
       <div className="flex flex-col items-center justify-center gap-5">
         <div className="flex justify-between w-full">

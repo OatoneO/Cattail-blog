@@ -6,6 +6,7 @@ import SkillsBar from "@/components/common/SkillsBar";
 import RecentUpdate from "@/components/common/RecentUpdate";
 import BasisInfo from "@/components/common/BasicInfo";
 import TagCloudComponent from "@/components/common/TagCloud";
+import Career from "@/components/common/Career";
 // import Spotify from "@/components/common/Spotify";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -70,6 +71,7 @@ export default async function Page() {
         <aside className="lg:w-[680px] w-full lg:sticky lg:h-fit lg:-top-10 flex flex-col gap-12 rounded-2xl ">
           <BasisInfo />
           <SkillsBar />
+          <Career />
         </aside>
       </section>
     </MotionDivWrapper>
