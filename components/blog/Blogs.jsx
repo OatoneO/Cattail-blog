@@ -49,9 +49,12 @@ export default function Blogs({ blogs }) {
               <div className="flex flex-col justify-between flex-grow p-4">
                 <div>
                   <h2 className="mb-2 font-bold">{blog.title}</h2>
-                  <p className="text-sm text-muted-foreground">
-                    {formatDate(blog.publishedAt)} | {blog.tag} · {blog.readTime}
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {formatDate(blog.publishedAt)} · {blog.readTime}
                   </p>
+                  <span className="inline-block px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary">
+                    {blog.tag}
+                  </span>
                 </div>
                 <p className="text-sm">{blog.summary}</p>
               </div>
