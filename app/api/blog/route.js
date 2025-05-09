@@ -1,3 +1,12 @@
+/**
+ * 博客API路由处理模块
+ * 处理博客相关的HTTP请求
+ * 
+ * 路由功能：
+ * - GET: 获取所有博客列表
+ * - POST: 创建新博客
+ */
+
 import { NextResponse } from 'next/server';
 import { createBlog, getAllBlogs } from '@/lib/db/blog-service';
 

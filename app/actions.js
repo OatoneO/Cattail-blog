@@ -32,36 +32,63 @@ export async function createMessage(formData) {
 
 // 博客相关操作
 export async function createOrUpdateBlog(formData) {
-  const blogData = {
-    title: formData.get("title"),
-    summary: formData.get("summary"),
-    image: formData.get("image"),
-    author: formData.get("author"),
-    publishedAt: formData.get("publishedAt") || new Date().toISOString().split('T')[0],
-    tag: formData.get("tag"),
-    readTime: formData.get("readTime") || "3 min read",
-    content: formData.get("content")
-  };
-  
-  const slug = formData.get("slug");
-  
   try {
-    if (slug) {
-      await updateBlog(slug, blogData);
+    const blogData = {
+      title: formData.get('title'),
+      summary: formData.get('summary'),
+      image: formData.get('image'),
+      author: formData.get('author'),
+      publishedAt: formData.get('publishedAt'),
+      tag: formData.get('tag'),
+      readTime: formData.get('readTime'),
+      content: formData.get('content'),
+    };
+
+    // 确保publishedAt是有效的日期格式
+    if (blogData.publishedAt) {
+      try {
+        const date = new Date(blogData.publishedAt);
+        if (isNaN(date.getTime())) {
+          throw new Error('Invalid date');
+        }
+        blogData.publishedAt = date.toISOString();
+      } catch (error) {
+        blogData.publishedAt = new Date().toISOString();
+      }
     } else {
-      await createBlog(blogData);
+      blogData.publishedAt = new Date().toISOString();
     }
+
+    // 确保图片数据正确格式化
+    const images = [];
+    if (blogData.image && blogData.image !== '/images/loading.jpg') {
+      images.push({
+        url: blogData.image,
+        alt: blogData.title || '博客封面图片'
+      });
+    }
+
+    const slug = formData.get('slug');
     
-    revalidatePath("/blog");
-    revalidatePath("/");
-    
+    let blog;
     if (slug) {
-      revalidatePath(`/blog/${slug}`);
+      blog = await updateBlog(slug, {
+        ...blogData,
+        images
+      });
+    } else {
+      blog = await createBlog({
+        ...blogData,
+        images
+      });
     }
+
+    revalidatePath('/blog/[slug]', 'page');
+    revalidatePath('/', 'page');
+    revalidatePath('/admin/blogs', 'page');
     
-    return { success: true };
+    return { success: true, blog };
   } catch (error) {
-    console.error("Error saving blog:", error);
     return { success: false, error: error.message };
   }
 }

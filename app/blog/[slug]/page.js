@@ -1,3 +1,14 @@
+/**
+ * 博客详情页面
+ * 展示单篇博客文章的详细内容
+ * 
+ * 功能：
+ * - 根据slug获取并展示博客内容
+ * - 支持MDX格式的内容渲染
+ * - 展示博客元数据（标题、作者、日期等）
+ * - 支持返回列表页
+ */
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -37,6 +48,7 @@ export default async function Blog({ params }) {
                 alt={title || ""}
                 className="object-cover"
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
           )}

@@ -47,3 +47,6 @@ next-env.d.ts
 
 #todo.md
 TODO.md
+
+# uploads
+/public/uploads

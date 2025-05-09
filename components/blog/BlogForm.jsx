@@ -1,3 +1,15 @@
+/**
+ * 博客表单组件
+ * 用于创建和编辑博客文章
+ * 
+ * 功能：
+ * - 支持创建新博客和编辑现有博客
+ * - 表单字段验证
+ * - 图片上传
+ * - 实时预览
+ * - 提交处理
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,9 +22,11 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import ImageUpload from "@/components/common/ImageUpload";
 import { Eye } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 
 export default function BlogForm({ blogData }) {
   const router = useRouter();
+  const { isSignedIn } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     slug: "",
@@ -28,13 +42,17 @@ export default function BlogForm({ blogData }) {
 
   useEffect(() => {
     if (blogData) {
+      const publishedAt = blogData.publishedAt 
+        ? new Date(blogData.publishedAt).toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0];
+      
       setFormData({
         slug: blogData.slug || "",
         title: blogData.title || "",
         summary: blogData.summary || "",
-        image: blogData.image || "/images/loading.jpg",
+        image: blogData.images?.[0]?.url || "/images/loading.jpg",
         author: blogData.author || "Cattail",
-        publishedAt: blogData.publishedAt || new Date().toISOString().split('T')[0],
+        publishedAt: publishedAt,
         tag: blogData.tag || "General",
         readTime: blogData.readTime || "3 min read",
         content: blogData.content || ""
@@ -44,11 +62,17 @@ export default function BlogForm({ blogData }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleImageChange = (imageUrl) => {
-    setFormData((prev) => ({ ...prev, image: imageUrl }));
+    setFormData(prev => ({
+      ...prev,
+      image: imageUrl
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -62,31 +86,36 @@ export default function BlogForm({ blogData }) {
       });
 
       const result = await createOrUpdateBlog(formDataToSend);
-      
+
       if (result.success) {
-        toast.success("博客保存成功！");
-        router.push("/admin/blogs");
+        toast.success('博客保存成功');
+        router.push('/admin/blogs');
       } else {
-        toast.error(result.error || "保存失败，请重试。");
+        toast.error(result.error || '保存失败');
       }
     } catch (error) {
-      console.error("Error saving blog:", error);
-      toast.error("保存失败，请重试。");
+      toast.error('保存失败: ' + error.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handlePreview = () => {
-    // 创建包含所有参数的URL
     const queryParams = new URLSearchParams();
     Object.keys(formData).forEach(key => {
       queryParams.append(key, formData[key]);
     });
     
-    // 打开预览页面
     window.open(`/admin/blogs/preview?${queryParams.toString()}`, '_blank');
   };
+
+  if (!isSignedIn) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-lg text-muted-foreground">请先登录后再编辑博客</p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

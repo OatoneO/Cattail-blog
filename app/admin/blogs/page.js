@@ -1,3 +1,14 @@
+/**
+ * 管理后台博客列表页面
+ * 用于管理所有博客文章
+ * 
+ * 功能：
+ * - 展示所有博客文章
+ * - 支持创建新博客
+ * - 支持编辑和删除操作
+ * - 空状态处理
+ */
+
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +20,12 @@ export const revalidate = 0;
 
 export default async function AdminBlogsPage() {
   const blogs = await getAllBlogs();
+  
+  // 转换数据格式以匹配现有的组件期望
+  const formattedBlogs = blogs.map(blog => ({
+    ...blog,
+    image: blog.images?.[0]?.url || '/images/loading.jpg'
+  }));
 
   return (
     <div>
@@ -22,7 +39,7 @@ export default async function AdminBlogsPage() {
         </Link>
       </div>
 
-      {blogs.length === 0 ? (
+      {formattedBlogs.length === 0 ? (
         <div className="text-center py-12 border border-dashed border-border rounded-lg">
           <p className="text-muted-foreground mb-4">暂无博客文章</p>
           <Link href="/admin/blogs/new">
@@ -33,7 +50,7 @@ export default async function AdminBlogsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {blogs.map((blog) => (
+          {formattedBlogs.map((blog) => (
             <AdminBlogItem key={blog.slug} blog={blog} />
           ))}
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Upload, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ export default function ImageUpload({ defaultImage, onImageChange }) {
   const [image, setImage] = useState(defaultImage || "");
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
+  const fileInputRef = useRef(null);
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -18,12 +19,14 @@ export default function ImageUpload({ defaultImage, onImageChange }) {
     // 验证文件类型
     if (!file.type.startsWith("image/")) {
       setError("请上传图片文件");
+      toast.error("请上传图片文件");
       return;
     }
 
     // 验证文件大小（限制为5MB）
     if (file.size > 5 * 1024 * 1024) {
       setError("图片大小不能超过5MB");
+      toast.error("图片大小不能超过5MB");
       return;
     }
 
@@ -34,23 +37,31 @@ export default function ImageUpload({ defaultImage, onImageChange }) {
       const formData = new FormData();
       formData.append("file", file);
 
+      console.log("开始上传图片...");
       const response = await fetch("/api/admin/upload", {
         method: "POST",
         body: formData,
       });
 
+      console.log("收到响应:", response.status);
+      const data = await response.json();
+      console.log("响应数据:", data);
+
       if (!response.ok) {
-        throw new Error("上传失败");
+        throw new Error(data.error || "上传失败");
       }
 
-      const data = await response.json();
+      if (!data.url) {
+        throw new Error("服务器返回的URL为空");
+      }
+
       setImage(data.url);
       onImageChange(data.url);
       toast.success("图片上传成功");
     } catch (error) {
       console.error("上传错误:", error);
-      setError("上传失败，请重试");
-      toast.error("上传失败，请重试");
+      setError(error.message || "上传失败，请重试");
+      toast.error(error.message || "上传失败，请重试");
     } finally {
       setIsUploading(false);
     }
@@ -61,6 +72,10 @@ export default function ImageUpload({ defaultImage, onImageChange }) {
     onImageChange("");
   };
 
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="space-y-4">
       {image ? (
@@ -69,7 +84,13 @@ export default function ImageUpload({ defaultImage, onImageChange }) {
             src={image}
             alt="上传的图片"
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover"
+            onError={(e) => {
+              console.error("图片加载失败:", image);
+              setError("图片加载失败");
+              toast.error("图片加载失败");
+            }}
           />
           <Button
             variant="destructive"
@@ -90,22 +111,22 @@ export default function ImageUpload({ defaultImage, onImageChange }) {
               支持 JPG, PNG, GIF 格式，最大 5MB
             </p>
           </div>
-          <label className="cursor-pointer">
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={isUploading}
-            >
-              {isUploading ? "上传中..." : "选择图片"}
-            </Button>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleUpload}
-              disabled={isUploading}
-            />
-          </label>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={isUploading}
+            onClick={handleButtonClick}
+          >
+            {isUploading ? "上传中..." : "选择图片"}
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleUpload}
+            disabled={isUploading}
+          />
           {error && (
             <p className="text-xs text-destructive mt-1">{error}</p>
           )}

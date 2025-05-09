@@ -1,3 +1,13 @@
+/**
+ * 单个博客API路由处理模块
+ * 处理特定博客的HTTP请求
+ * 
+ * 路由功能：
+ * - GET: 获取指定slug的博客内容
+ * - PUT: 更新指定slug的博客内容
+ * - DELETE: 删除指定slug的博客
+ */
+
 import { NextResponse } from 'next/server';
 import { getBlogBySlug, updateBlog, deleteBlog } from '@/lib/db/blog-service';
 

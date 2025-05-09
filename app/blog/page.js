@@ -1,3 +1,13 @@
+/**
+ * 博客列表页面
+ * 展示所有博客文章的列表
+ * 
+ * 功能：
+ * - 获取并展示所有博客文章
+ * - 支持动画过渡效果
+ * - 响应式布局设计
+ */
+
 import MotionDivWrapper from "@/components/common/MotionDivWrapper";
 import Blogs from "@/components/blog/Blogs";
 import { getAllBlogs } from "@/lib/db/blog-service";
@@ -11,15 +21,7 @@ export default async function BlogPage() {
   // 转换数据格式以匹配现有的组件期望
   const formattedBlogs = blogs.map(blog => ({
     ...blog,
-    metadata: {
-      title: blog.title,
-      summary: blog.summary,
-      publishedAt: blog.publishedAt,
-      author: blog.author,
-      tag: blog.tag,
-      readTime: blog.readTime,
-      image: blog.images[0]?.url || '/images/loading.jpg'
-    }
+    image: blog.images?.[0]?.url || '/images/loading.jpg'
   }));
   
   return (
