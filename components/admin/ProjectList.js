@@ -21,7 +21,6 @@ export default function ProjectList({ projects }) {
           <tr className="border-b border-gray-700">
             <th className="px-4 py-2 text-left">标题</th>
             <th className="px-4 py-2 text-left">描述</th>
-            <th className="px-4 py-2 text-left">链接</th>
             <th className="px-4 py-2 text-left">技术栈</th>
             <th className="px-4 py-2 text-left">操作</th>
           </tr>
@@ -29,33 +28,31 @@ export default function ProjectList({ projects }) {
         <tbody>
           {projects.map((project) => (
             <tr key={project.id} className="border-b border-gray-700 hover:bg-gray-800/50">
-              <td className="px-4 py-2">{project.title}</td>
-              <td className="px-4 py-2">{project.description}</td>
-              <td className="px-4 py-2">
-                <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
-                  {new URL(project.link).host}
-                </a>
-              </td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-3">{project.title}</td>
+              <td className="px-4 py-3 max-w-md truncate">{project.description}</td>
+              <td className="px-4 py-3">
                 <div className="flex flex-wrap gap-1">
-                  {project.technologies.map((tech) => (
-                    <span key={tech} className="px-2 py-1 text-xs bg-white/10 rounded-full">
+                  {project.technologies?.map((tech, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-0.5 text-xs bg-gray-700 rounded-full"
+                    >
                       {tech}
                     </span>
                   ))}
                 </div>
               </td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-3">
                 <div className="flex gap-2">
                   <Link
                     href={`/admin/projects/edit/${project.id}`}
-                    className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
+                    className="p-1 text-blue-400 hover:text-blue-300"
                   >
                     <Edit2 className="w-4 h-4" />
                   </Link>
                   <button
                     onClick={() => handleDeleteClick(project)}
-                    className="p-2 text-red-400 hover:text-red-300 transition-colors"
+                    className="p-1 text-red-400 hover:text-red-300"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -65,7 +62,6 @@ export default function ProjectList({ projects }) {
           ))}
         </tbody>
       </table>
-
       <DeleteProjectDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}

@@ -1,5 +1,5 @@
 import { getProjectById } from "@/lib/db/project-service";
-import ProjectForm from "@/components/ProjectForm";
+import ProjectForm from "@/components/project/ProjectForm";
 import { notFound } from "next/navigation";
 
 export default async function EditProjectPage({ params }) {

@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { TagInput } from "@/components/ui/tag-input";
 import { toast } from "sonner";
 
 export default function ProjectForm({ projectData }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     id: "",
     title: "",
@@ -33,28 +35,89 @@ export default function ProjectForm({ projectData }) {
     }
   }, [projectData]);
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.title.trim()) {
+      newErrors.title = "标题不能为空";
+    }
+    
+    if (!formData.description.trim()) {
+      newErrors.description = "描述不能为空";
+    }
+    
+    if (!formData.imageUrl.trim()) {
+      newErrors.imageUrl = "图片链接不能为空";
+    } else if (!isValidUrl(formData.imageUrl)) {
+      newErrors.imageUrl = "请输入有效的图片链接";
+    }
+    
+    if (formData.link && !isValidUrl(formData.link)) {
+      newErrors.link = "请输入有效的项目链接";
+    }
+    
+    if (formData.technologies.length === 0) {
+      newErrors.technologies = "请至少添加一个技术标签";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const isValidUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
+    // 清除对应字段的错误
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleTechnologiesChange = (technologies) => {
+    setFormData(prev => ({
+      ...prev,
+      technologies
+    }));
+    if (errors.technologies) {
+      setErrors(prev => ({
+        ...prev,
+        technologies: undefined
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      toast.error("请检查表单填写是否正确");
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
-      // 将标签字符串转换为数组
-      const technologies = formData.technologies.split(',').map(tech => tech.trim()).filter(Boolean);
-      
       const data = {
-        title: formData.title,
-        description: formData.description,
-        link: formData.link,
-        imageUrl: formData.imageUrl,
-        technologies
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        link: formData.link.trim(),
+        imageUrl: formData.imageUrl.trim(),
+        technologies: formData.technologies
       };
 
       const url = projectData?.id 
@@ -77,7 +140,6 @@ export default function ProjectForm({ projectData }) {
 
       toast.success(projectData ? "项目已更新" : "项目已创建");
       
-      // 等待提示显示后立即跳转
       setTimeout(() => {
         router.push("/admin/projects");
         router.refresh();
@@ -102,8 +164,11 @@ export default function ProjectForm({ projectData }) {
           value={formData.title}
           onChange={handleChange}
           placeholder="项目标题"
-          required
+          className={errors.title ? "border-destructive" : ""}
         />
+        {errors.title && (
+          <p className="text-sm text-destructive">{errors.title}</p>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -115,8 +180,11 @@ export default function ProjectForm({ projectData }) {
           onChange={handleChange}
           placeholder="项目描述"
           rows={4}
-          required
+          className={errors.description ? "border-destructive" : ""}
         />
+        {errors.description && (
+          <p className="text-sm text-destructive">{errors.description}</p>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -128,7 +196,11 @@ export default function ProjectForm({ projectData }) {
           value={formData.link}
           onChange={handleChange}
           placeholder="https://example.com"
+          className={errors.link ? "border-destructive" : ""}
         />
+        {errors.link && (
+          <p className="text-sm text-destructive">{errors.link}</p>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -139,18 +211,20 @@ export default function ProjectForm({ projectData }) {
           value={formData.imageUrl}
           onChange={handleChange}
           placeholder="https://example.com/image.jpg"
-          required
+          className={errors.imageUrl ? "border-destructive" : ""}
         />
+        {errors.imageUrl && (
+          <p className="text-sm text-destructive">{errors.imageUrl}</p>
+        )}
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="technologies">技术栈（用逗号分隔）</Label>
-        <Input
-          id="technologies"
-          name="technologies"
-          value={Array.isArray(formData.technologies) ? formData.technologies.join(', ') : formData.technologies}
-          onChange={handleChange}
-          placeholder="React, Next.js, TypeScript"
+        <Label htmlFor="technologies">技术栈 *</Label>
+        <TagInput
+          value={formData.technologies}
+          onChange={handleTechnologiesChange}
+          placeholder="输入技术标签后按回车"
+          error={errors.technologies}
         />
       </div>
       
