@@ -78,3 +78,42 @@ npm run dev
 ## 许可证
 
 MIT
+
+## 博客管理
+
+### 导入博客
+
+项目提供了批量导入MDX格式博客的工具，支持以下功能：
+
+- 批量导入content/blog目录下的所有MDX文件
+- 导入时自动处理知识图谱数据
+- 支持指定特定文件导入
+- 支持更新已存在的博客
+
+使用方法：
+
+```bash
+# 导入所有博客
+node scripts/import-blogs.js
+
+# 只导入特定文件
+node scripts/import-blogs.js -f html5-semantic-elements.mdx
+
+# 导入时不更新已存在的博客
+node scripts/import-blogs.js --no-update
+
+# 查看更多选项
+node scripts/import-blogs.js --help
+```
+
+### 知识图谱处理
+
+导入博客时会自动处理知识图谱数据，你也可以单独触发知识图谱处理：
+
+```bash
+# 处理单篇博客的知识图谱
+curl -X POST http://localhost:3000/api/process-blog -H "Content-Type: application/json" -d '{"slug":"blog-slug"}'
+
+# 处理所有博客的知识图谱
+curl http://localhost:3000/api/process-blog
+```

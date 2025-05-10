@@ -130,30 +130,49 @@ async function storeNeo4jNodes(nodes, nodeLabel) {
   const session = neo4jService.getSession();
   
   try {
+    console.log(`开始存储 ${nodes.length} 个节点到 Neo4j (标签: ${nodeLabel})...`);
+    
     for (const node of nodes) {
+      console.log(`处理节点: ${node.id}, 类型: ${node.type}`);
+      
+      // 处理缺失的属性以避免Neo4j错误
+      const properties = node.properties || {};
+      const nodeProps = {
+        id: node.id,
+        type: node.type,
+        title: properties.title || '',
+        url: properties.url || '',
+        summary: properties.summary || '',
+        category: properties.category || ''
+      };
+      
+      // 日志记录完整的节点属性
+      console.log('节点属性:', JSON.stringify(nodeProps));
+      
       // 使用MERGE操作以避免重复
-      await session.run(
-        `MERGE (n:${nodeLabel} {id: $id})
-         ON CREATE SET 
-           n.type = $type,
-           n.title = $title,
-           n.url = $url,
-           n.summary = $summary,
-           n.category = $category
-         ON MATCH SET
-           n.url = $url,
-           n.summary = $summary,
-           n.category = $category`,
-        {
-          id: node.id,
-          type: node.type,
-          title: node.properties.title,
-          url: node.properties.url,
-          summary: node.properties.summary,
-          category: node.properties.category || ''
-        }
-      );
+      try {
+        await session.run(
+          `MERGE (n:${nodeLabel} {id: $id})
+           ON CREATE SET 
+             n.type = $type,
+             n.title = $title,
+             n.url = $url,
+             n.summary = $summary,
+             n.category = $category
+           ON MATCH SET
+             n.url = $url,
+             n.summary = $summary,
+             n.category = $category`,
+          nodeProps
+        );
+        console.log(`节点 ${node.id} 成功存储`);
+      } catch (error) {
+        console.error(`存储节点 ${node.id} 失败:`, error);
+        // 继续处理其他节点
+      }
     }
+    
+    console.log('所有节点存储完成');
   } finally {
     await session.close();
   }
@@ -164,16 +183,30 @@ async function storeNeo4jRelationships(relationships) {
   const session = neo4jService.getSession();
   
   try {
+    console.log(`开始存储 ${relationships.length} 个关系到 Neo4j...`);
+    
     for (const rel of relationships) {
-      await session.run(
-        `MATCH (a {id: $sourceId}), (b {id: $targetId})
-         MERGE (a)-[r:${rel.type}]->(b)`,
-        {
-          sourceId: rel.source,
-          targetId: rel.target
-        }
-      );
+      console.log(`处理关系: ${rel.source} -> ${rel.target} [${rel.type}]`);
+      
+      try {
+        await session.run(
+          `MATCH (a {id: $sourceId}), (b {id: $targetId})
+           MERGE (a)-[r:${rel.type}]->(b)
+           ${rel.properties ? 'ON CREATE SET r += $properties' : ''}`,
+          {
+            sourceId: rel.source,
+            targetId: rel.target,
+            properties: rel.properties || {}
+          }
+        );
+        console.log(`关系 ${rel.source} -> ${rel.target} 成功存储`);
+      } catch (error) {
+        console.error(`存储关系 ${rel.source} -> ${rel.target} 失败:`, error);
+        // 继续处理其他关系
+      }
     }
+    
+    console.log('所有关系存储完成');
   } finally {
     await session.close();
   }

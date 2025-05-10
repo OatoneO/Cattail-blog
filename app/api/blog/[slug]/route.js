@@ -37,12 +37,22 @@ export async function PUT(request, { params }) {
   try {
     const { slug } = params;
     const data = await request.json();
-    const blog = await updateBlog(slug, data);
-    return NextResponse.json(blog);
+    
+    // 检查博客是否存在
+    const existing = await getBlogBySlug(slug);
+    if (!existing) {
+      return NextResponse.json(
+        { error: '博客不存在' },
+        { status: 404 }
+      );
+    }
+    
+    const updatedBlog = await updateBlog(slug, data);
+    return NextResponse.json(updatedBlog);
   } catch (error) {
     console.error('更新博客失败:', error);
     return NextResponse.json(
-      { error: '更新博客失败' },
+      { error: '更新博客失败', details: error.message },
       { status: 500 }
     );
   }
@@ -51,8 +61,18 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     const { slug } = params;
+    
+    // 检查博客是否存在
+    const existing = await getBlogBySlug(slug);
+    if (!existing) {
+      return NextResponse.json(
+        { error: '博客不存在' },
+        { status: 404 }
+      );
+    }
+    
     await deleteBlog(slug);
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ message: '博客已删除' });
   } catch (error) {
     console.error('删除博客失败:', error);
     return NextResponse.json(
