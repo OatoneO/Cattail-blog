@@ -1,4 +1,4 @@
-import neo4j from 'neo4j-driver';
+import neo4j, { Record, Driver } from 'neo4j-driver';
 
 interface Node {
   id: string;
@@ -48,17 +48,47 @@ interface ApiGraphData {
   relationships: ApiRelationship[];
 }
 
-// Neo4j连接配置
-const driver = neo4j.driver(
-  process.env.NEO4J_URI || 'bolt://localhost:7687',
-  neo4j.auth.basic(
-    process.env.NEO4J_USER || 'neo4j',
-    process.env.NEO4J_PASSWORD || 'Boge1010!'
-  )
-);
+// 防止客户端导入时创建多个连接
+let driver: Driver | null = null;
+
+// 获取或创建 Neo4j 驱动
+export function getDriver(): Driver | null {
+  // 如果已经存在驱动，直接返回
+  if (driver) {
+    return driver;
+  }
+  
+  // 只在服务器端创建连接
+  if (typeof window === 'undefined') {
+    driver = neo4j.driver(
+      process.env.NEO4J_URI || 'bolt://localhost:7687',
+      neo4j.auth.basic(
+        process.env.NEO4J_USER || 'neo4j',
+        process.env.NEO4J_PASSWORD || 'Boge1010!'
+      )
+    );
+    return driver;
+  }
+  
+  return null;
+}
+
+// 获取会话方法
+export function getSession() {
+  const driver = getDriver();
+  if (!driver) {
+    throw new Error('Neo4j driver not initialized or running on client side');
+  }
+  return driver.session();
+}
 
 // 测试数据库连接
 async function testConnection() {
+  const driver = getDriver();
+  if (!driver) {
+    throw new Error('Neo4j driver not initialized or running on client side');
+  }
+  
   const session = driver.session();
   try {
     const result = await session.run('RETURN 1 as n');
@@ -79,6 +109,11 @@ export async function importData(data: GraphData, type: 'css' | 'html' = 'css') 
     throw new Error('无法连接到数据库');
   }
 
+  const driver = getDriver();
+  if (!driver) {
+    throw new Error('Neo4j driver not initialized or running on client side');
+  }
+  
   const session = driver.session();
   try {
     // 确定正确的节点标签
@@ -134,6 +169,12 @@ export async function importData(data: GraphData, type: 'css' | 'html' = 'css') 
 
 export async function getGraphData(type: 'css' | 'html' = 'css'): Promise<ApiGraphData> {
   console.log(`Neo4j 服务: 开始获取${type.toUpperCase()}图谱数据`);
+  
+  const driver = getDriver();
+  if (!driver) {
+    throw new Error('Neo4j driver not initialized or running on client side');
+  }
+  
   const session = driver.session();
   try {
     // 确定正确的节点标签
@@ -148,7 +189,7 @@ export async function getGraphData(type: 'css' | 'html' = 'css'): Promise<ApiGra
     
     console.log(`查询返回 ${result.records.length} 条记录`);
     
-    const nodes: ApiNode[] = result.records.map(record => {
+    const nodes: ApiNode[] = result.records.map((record: Record) => {
       const node = record.get('n').properties;
       return {
         id: node.id,
@@ -163,7 +204,156 @@ export async function getGraphData(type: 'css' | 'html' = 'css'): Promise<ApiGra
     });
     
     const relationships: ApiRelationship[] = [];
-    result.records.forEach(record => {
+    result.records.forEach((record: Record) => {
+      const sourceId = record.get('n').properties.id;
+      const rels = record.get('relationships');
+      rels.forEach((rel: { type: string; target: string }) => {
+        if (rel.target) {
+          relationships.push({
+            source: sourceId,
+            target: rel.target,
+            type: rel.type
+          });
+        }
+      });
+    });
+    
+    console.log(`处理完成: ${nodes.length} 个节点, ${relationships.length} 个关系`);
+    return { nodes, relationships };
+  } catch (error) {
+    console.error('Neo4j 查询错误:', error);
+    throw new Error('获取数据失败');
+  } finally {
+    console.log('关闭 Neo4j 会话');
+    await session.close();
+  }
+}
+
+// 获取所有标签
+export async function getAllTags(): Promise<string[]> {
+  const driver = getDriver();
+  if (!driver) {
+    throw new Error('Neo4j driver not initialized or running on client side');
+  }
+  
+  const session = driver.session();
+  try {
+    // 查询所有节点的类别
+    const result = await session.run(`
+      MATCH (n) 
+      WHERE n.category IS NOT NULL
+      RETURN DISTINCT n.category as tag
+    `);
+    
+    // 提取所有唯一的标签值
+    const tags = result.records.map((record: Record) => record.get('tag').toString());
+    return tags;
+  } catch (error) {
+    console.error('获取标签列表失败:', error);
+    throw new Error('获取标签列表失败');
+  } finally {
+    await session.close();
+  }
+}
+
+// 根据标签获取知识图谱数据
+export async function getGraphDataByTag(tag: string): Promise<ApiGraphData> {
+  console.log(`Neo4j 服务: 开始获取标签 ${tag} 的图谱数据`);
+  
+  const driver = getDriver();
+  if (!driver) {
+    throw new Error('Neo4j driver not initialized or running on client side');
+  }
+  
+  const session = driver.session();
+  try {
+    console.log(`执行 Neo4j 查询 (标签: ${tag})...`);
+    const result = await session.run(`
+      MATCH (n)
+      WHERE n.category = $tag
+      OPTIONAL MATCH (n)-[r]->(m)
+      WHERE m.category = $tag
+      RETURN n, collect(DISTINCT { type: type(r), target: m.id }) as relationships
+    `, { tag });
+    
+    console.log(`查询返回 ${result.records.length} 条记录`);
+    
+    const nodes: ApiNode[] = result.records.map((record: Record) => {
+      const node = record.get('n').properties;
+      return {
+        id: node.id,
+        label: node.title,
+        type: node.type,
+        properties: {
+          url: node.url,
+          summary: node.summary,
+          category: node.category
+        }
+      };
+    });
+    
+    const relationships: ApiRelationship[] = [];
+    result.records.forEach((record: Record) => {
+      const sourceId = record.get('n').properties.id;
+      const rels = record.get('relationships');
+      rels.forEach((rel: { type: string; target: string }) => {
+        if (rel.target) {
+          relationships.push({
+            source: sourceId,
+            target: rel.target,
+            type: rel.type
+          });
+        }
+      });
+    });
+    
+    console.log(`处理完成: ${nodes.length} 个节点, ${relationships.length} 个关系`);
+    return { nodes, relationships };
+  } catch (error) {
+    console.error('Neo4j 查询错误:', error);
+    throw new Error('获取数据失败');
+  } finally {
+    console.log('关闭 Neo4j 会话');
+    await session.close();
+  }
+}
+
+// 获取所有图谱数据，不按标签或类型筛选
+export async function getAllGraphData(): Promise<ApiGraphData> {
+  console.log('Neo4j 服务: 开始获取所有图谱数据');
+  
+  const driver = getDriver();
+  if (!driver) {
+    throw new Error('Neo4j driver not initialized or running on client side');
+  }
+  
+  const session = driver.session();
+  try {
+    console.log('执行 Neo4j 查询 (获取所有节点和关系)...');
+    const result = await session.run(`
+      MATCH (n)
+      OPTIONAL MATCH (n)-[r]->(m)
+      RETURN n, collect(DISTINCT { type: type(r), target: m.id }) as relationships
+    `);
+    
+    console.log(`查询返回 ${result.records.length} 条记录`);
+    
+    const nodes: ApiNode[] = result.records.map((record: Record) => {
+      const node = record.get('n').properties;
+      return {
+        id: node.id,
+        label: node.title,
+        type: node.type,
+        properties: {
+          url: node.url,
+          summary: node.summary,
+          category: node.category
+        }
+      };
+    });
+    
+    const relationships: ApiRelationship[] = [];
+    result.records.forEach((record: Record) => {
       const sourceId = record.get('n').properties.id;
       const rels = record.get('relationships');
       rels.forEach((rel: { type: string; target: string }) => {
@@ -190,5 +380,8 @@ export async function getGraphData(type: 'css' | 'html' = 'css'): Promise<ApiGra
 
 // 关闭数据库连接
 export function closeConnection() {
-  driver.close();
+  if (driver) {
+    driver.close();
+    driver = null;
+  }
 } 
