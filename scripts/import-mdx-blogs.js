@@ -32,8 +32,8 @@ const CONFIG = {
   // 是否处理知识图谱
   processKnowledgeGraph: true,
   // 导入特定文件，为空则导入所有文件
-  targetFiles: ['html5-semantic-elements.mdx'], 
-  // targetFiles: [], // 留空导入所有文件
+  // targetFiles: ['html5-semantic-elements.mdx'], 
+  targetFiles: [], // 留空导入所有文件
 };
 
 /**
