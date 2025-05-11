@@ -2,13 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { debounce } from 'lodash';
-
-// 如果你的项目中已有这些组件，请取消注释下面这行
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 interface Node extends d3.SimulationNodeDatum {
   id: string;
   label: string;
@@ -39,16 +32,6 @@ interface GraphData {
 
 // 为常见类型创建静态颜色映射
 const TYPE_COLORS: Record<string, string> = {
-  // HTML相关类型
-  'element': '#4ECDC4',
-  'tag': '#4ECDC4',
-  'attribute': '#FF6B6B',
-  'property': '#FF6B6B',
-  // CSS相关类型
-  'selector': '#4ECDC4',
-  'rule': '#4ECDC4',
-  'value': '#FF6B6B',
-  'declaration': '#FF6B6B',
   // 通用类型
   'basic': '#45B7D1',
   'advanced': '#9B59B6',
@@ -112,7 +95,6 @@ export default function KnowledgeGraph() {
   const simulationRef = useRef<d3.Simulation<Node, undefined> | null>(null);
   const tooltipRef = useRef<d3.Selection<HTMLDivElement, unknown, HTMLElement, any> | null>(null);
   const rotationRef = useRef({ x: 0, y: 0 });
-  const [searchQuery, setSearchQuery] = useState('');
   const timerRef = useRef<d3.Timer | null>(null);
   const nodesRef = useRef<Node[]>([]);
   const linksRef = useRef<Relationship[]>([]);
@@ -132,62 +114,6 @@ export default function KnowledgeGraph() {
   // 添加标签相关状态
   // const [availableTags, setAvailableTags] = useState<string[]>([]);
   // const [selectedTag, setSelectedTag] = useState<string | null>(null);
-
-  // 防抖搜索函数
-  const debouncedSearch = debounce((query: string) => {
-    if (!svgRef.current || !gRef.current) return;
-    
-    const nodes = gRef.current.selectAll('.node');
-    const links = gRef.current.selectAll('.link');
-
-    if (!query) {
-      // 如果搜索框为空，显示所有节点
-      nodes.transition()
-        .duration(500)
-        .style('opacity', 1);
-      
-      links.transition()
-        .duration(500)
-        .style('opacity', 0.6);
-
-      return;
-    }
-
-    // 过滤节点
-    const matchedNodes = nodesRef.current.filter(node => 
-      node.label.toLowerCase().includes(query.toLowerCase()) ||
-      node.properties.summary.toLowerCase().includes(query.toLowerCase())
-    );
-
-    const matchedNodeIds = new Set(matchedNodes.map(n => n.id));
-
-    // 更新节点可见性
-    nodes.transition()
-      .duration(500)
-      .style('opacity', (d: any) => {
-        const node = d as Node;
-        return matchedNodeIds.has(node.id) ? 1 : 0.1;
-      });
-
-    // 更新连接线可见性
-    links.transition()
-      .duration(500)
-      .style('opacity', (d: any) => {
-        const link = d as Relationship;
-        const source = link.source as Node;
-        const target = link.target as Node;
-        return (matchedNodeIds.has(source.id) || matchedNodeIds.has(target.id)) ? 0.6 : 0.1;
-      });
-  }, 300);
-
-  useEffect(() => {
-    if (searchQuery) {
-      debouncedSearch(searchQuery);
-    } else if (!initialRenderRef.current) {
-      // 只有在非初始渲染时才执行搜索
-      debouncedSearch('');
-    }
-  }, [searchQuery]);
 
   // 当页面加载或activeTab更改时重新渲染图谱
   useEffect(() => {
@@ -263,32 +189,43 @@ export default function KnowledgeGraph() {
           category: ''
         }
       }));
-      console.log('处理后的 nodes:', nodes);
-
-      // 处理关系数据，确保source和target是节点对象而不是字符串
-      const relationships = data.relationships.map(rel => ({
-        ...rel,
-        source: typeof rel.source === 'string' ? 
-          nodes.find(n => n.id === rel.source) || rel.source : rel.source,
-        target: typeof rel.target === 'string' ? 
-          nodes.find(n => n.id === rel.target) || rel.target : rel.target
-      })).filter(rel => 
-        typeof rel.source !== 'string' && typeof rel.target !== 'string'
-      );
-      console.log('处理后的 relationships:', relationships);
-
-      // 统计每个实体节点被多少博客节点关联
-      const blogNodeIds = new Set(nodes.filter(n => n.type === 'blog').map(n => n.id));
+      // 以 label 为唯一标识（标准化：去除首尾空格并转小写）去重
+      const labelMap = new Map<string, Node>();
+      nodes.forEach(node => {
+        const normLabel = node.label.trim().toLowerCase();
+        if (!labelMap.has(normLabel)) {
+          labelMap.set(normLabel, node);
+        }
+      });
+      const uniqueNodes = Array.from(labelMap.values());
+      // 处理关系数据，source/target 匹配也用标准化 label
+      const labelToNode = new Map(uniqueNodes.map(n => [n.label.trim().toLowerCase(), n]));
+      const relationships = data.relationships.map(rel => {
+        const sourceNode = typeof rel.source === 'string'
+          ? labelToNode.get((nodes.find(n => n.id === rel.source)?.label || '').trim().toLowerCase())
+          : labelToNode.get((rel.source as Node).label.trim().toLowerCase());
+        const targetNode = typeof rel.target === 'string'
+          ? labelToNode.get((nodes.find(n => n.id === rel.target)?.label || '').trim().toLowerCase())
+          : labelToNode.get((rel.target as Node).label.trim().toLowerCase());
+        return {
+          ...rel,
+          source: sourceNode,
+          target: targetNode
+        };
+      }).filter(rel => rel.source && rel.target) as Relationship[];
+      // 统计每个实体节点被多少博客节点关联（在去重后进行）
+      const blogNodeIds = new Set(uniqueNodes.filter(n => n.type === 'blog').map(n => n.id));
       const entityBlogCount: Record<string, number> = {};
       relationships.forEach(rel => {
-        const source = typeof rel.source === 'object' ? rel.source : nodes.find(n => n.id === rel.source);
-        const target = typeof rel.target === 'object' ? rel.target : nodes.find(n => n.id === rel.target);
-        if (!source || !target) return;
-        if (source.type === 'blog' && target.type !== 'blog') {
-          entityBlogCount[target.id] = (entityBlogCount[target.id] || 0) + 1;
-        }
-        if (target.type === 'blog' && source.type !== 'blog') {
-          entityBlogCount[source.id] = (entityBlogCount[source.id] || 0) + 1;
+        const source = rel.source as Node;
+        const target = rel.target as Node;
+        if (source && target) {
+          if (source.type === 'blog' && target.type !== 'blog') {
+            entityBlogCount[target.id] = (entityBlogCount[target.id] || 0) + 1;
+          }
+          if (target.type === 'blog' && source.type !== 'blog') {
+            entityBlogCount[source.id] = (entityBlogCount[source.id] || 0) + 1;
+          }
         }
       });
       // 只保留被多个博客节点关联的实体节点
@@ -296,14 +233,17 @@ export default function KnowledgeGraph() {
         .filter(([id, count]) => count >= 2)
         .map(([id]) => id);
       // 只保留博客节点和被多个博客节点关联的实体节点
-      const filteredNodes = nodes.filter(n =>
+      const filteredNodes = uniqueNodes.filter(n =>
         n.type === 'blog' || filteredEntityIds.includes(n.id)
       );
       // 只保留与这些节点相关的关系
       const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
       const filteredRelationships = relationships.filter(rel => {
-        const sourceId = typeof rel.source === 'object' ? rel.source.id : rel.source;
-        const targetId = typeof rel.target === 'object' ? rel.target.id : rel.target;
+        const source = rel.source as Node;
+        const target = rel.target as Node;
+        if (!source || !target) return false;
+        const sourceId = source.id;
+        const targetId = target.id;
         return filteredNodeIds.has(sourceId) && filteredNodeIds.has(targetId);
       });
       // 完全重写初始布局策略，使用网格初始布局
@@ -776,17 +716,7 @@ export default function KnowledgeGraph() {
   return (
     <div className="flex flex-col items-center gap-1">
       
-      <div className="relative w-[80vw] max-w-2xl">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
-        <input
-          type="text"
-          placeholder="搜索节点..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground rounded-md border px-3 py-2"
-        />
-      </div>
-      <div className="relative w-[80vw] h-[70vh] bg-background border border-border rounded-md overflow-hidden">
+      <div className="relative w-[80vw] h-[80vh] bg-background border border-border rounded-md overflow-hidden">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
             <div className="text-foreground text-xl">加载知识图谱中...</div>
