@@ -588,7 +588,7 @@ export default function KnowledgeGraph() {
               .duration(200)
               .style('stroke-opacity', (l: any) => {
                 const linkData = l as Relationship;
-                return importantLinksRef.current.includes(linkData) ? 0.4 : 0;
+                return importantLinksRef.current.includes(linkData) ? 0.4 : 0.3;
               })
               .style('stroke-width', 1.5);
           }
