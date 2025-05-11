@@ -1,83 +1,142 @@
-# Cattail Blog
+# Cattail.me - 个人博客系统
 
-一个基于 Next.js 的个人博客系统，集成了知识图谱、项目管理等功能。
+## 项目简介
 
-## 功能特点
+Cattail.me 是一个现代化的个人博客系统，采用 Next.js 14 构建，集成了知识图谱、标签云等创新功能，为用户提供丰富的博客阅读和写作体验。
 
-- 📝 博客文章管理
-- 📊 知识图谱可视化
-- 🎯 项目管理
-- 💬 留言系统
-- 🌙 深色模式支持
-- 🔐 用户认证
+## 运行环境要求
 
-## 技术栈
+- Node.js 18.0.0 或更高版本
+- PostgreSQL 数据库
+- Neo4j 图数据库
+- npm 或 yarn 包管理器
 
-- Next.js 14
-- Prisma
-- Tailwind CSS
-- TypeScript
-- Clerk (认证)
+## 系统开发环境
 
-## 开始使用
+### 前端技术栈
+
+1. **Next.js 14**
+   - 使用 App Router 架构
+   - 支持服务端渲染(SSR)和静态站点生成(SSG)
+   - 内置 API 路由功能
+   - 优点：提供优秀的开发体验和性能优化
+
+2. **React 18**
+   - 使用最新的 React 特性
+   - 支持并发渲染
+   - 优点：提供更好的性能和用户体验
+
+3. **Tailwind CSS**
+   - 原子化 CSS 框架
+   - 自定义主题配置
+   - 优点：快速开发，高度可定制
+
+4. **D3.js**
+   - 用于构建交互式知识图谱
+   - 支持力导向图布局
+   - 优点：强大的数据可视化能力
+
+### 后端技术栈
+
+1. **Prisma ORM**
+   - 类型安全的数据库访问
+   - 自动生成的类型定义
+   - 优点：提供类型安全和开发效率
+
+2. **Neo4j 图数据库**
+   - 存储知识图谱数据
+   - 支持复杂的关系查询
+   - 优点：高效处理图数据结构
+
+3. **PostgreSQL**
+   - 主数据库
+   - 存储博客内容、用户数据等
+   - 优点：可靠性和性能
+
+### 认证与安全
+
+1. **Clerk**
+   - 用户认证和授权
+   - 社交登录集成
+   - 优点：简化认证流程，提供安全保障
+
+### 部署与监控
+
+1. **Vercel**
+   - 自动部署
+   - 性能监控
+   - 优点：无缝集成，优秀的性能
+
+## 系统功能特点
+
+1. **知识图谱**
+   - 可视化展示博客内容关联
+   - 交互式探索
+   - 支持按标签筛选
+
+2. **标签云**
+   - 动态展示内容标签
+   - 交互式动画效果
+   - 支持标签筛选
+
+3. **响应式设计**
+   - 适配各种设备尺寸
+   - 优化的移动端体验
+
+4. **暗色模式**
+   - 支持系统主题切换
+   - 自定义主题配置
+
+## 开发指南
 
 1. 克隆项目
 ```bash
-git clone https://github.com/yourusername/Cattail-blog.git
-cd Cattail-blog
+git clone https://github.com/yourusername/Cattail.me.git
 ```
 
 2. 安装依赖
 ```bash
 npm install
+# 或
+yarn install
 ```
 
 3. 配置环境变量
-复制 `.env.example` 到 `.env` 并填写必要的环境变量
-
-4. 初始化数据库
 ```bash
-npx prisma db push
+cp .env.example .env
+# 编辑 .env 文件，填入必要的配置信息
 ```
 
-5. 启动开发服务器
+4. 启动开发服务器
 ```bash
 npm run dev
+# 或
+yarn dev
 ```
 
-## 项目结构
+## 部署说明
 
-```
-├── app/                # Next.js 应用目录
-│   ├── api/           # API 路由
-│   ├── blog/          # 博客相关页面
-│   └── projects/      # 项目相关页面
-├── components/        # React 组件
-│   ├── layout/       # 布局组件
-│   ├── blog/         # 博客相关组件
-│   ├── project/      # 项目相关组件
-│   ├── admin/        # 管理界面组件
-│   ├── ui/           # UI 组件
-│   └── common/       # 通用组件
-├── lib/              # 工具函数和共享代码
-├── prisma/           # Prisma schema 和迁移
-└── public/           # 静态资源
+1. 构建项目
+```bash
+npm run build
+# 或
+yarn build
 ```
 
-## 开发指南
-
-- 使用 `npm run dev` 启动开发服务器
-- 使用 `npm run build` 构建生产版本
-- 使用 `npm run lint` 运行代码检查
-- 使用 `npx prisma studio` 管理数据库
+2. 启动生产服务器
+```bash
+npm run start
+# 或
+yarn start
+```
 
 ## 贡献指南
 
-欢迎提交 Pull Request 或创建 Issue。
+欢迎提交 Issue 和 Pull Request 来帮助改进项目。
 
 ## 许可证
 
-MIT
+MIT License
 
 ## 博客管理
 
