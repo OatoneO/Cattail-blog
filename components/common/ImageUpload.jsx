@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -11,6 +11,12 @@ export default function ImageUpload({ defaultImage, onImageChange }) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (defaultImage) {
+      setImage(defaultImage);
+    }
+  }, [defaultImage]);
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
