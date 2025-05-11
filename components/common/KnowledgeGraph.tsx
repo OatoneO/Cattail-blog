@@ -102,7 +102,6 @@ export default function KnowledgeGraph() {
   const gRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const initialRenderRef = useRef(true);
-  const [themeColors, setThemeColors] = useState({ foreground: 'hsl(0 0% 100%)', secondaryForeground: 'hsl(240 3.7% 46.1%)' }); // Default light theme
   const [activeTab, setActiveTab] = useState('html');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const importantLinksRef = useRef<Relationship[]>([]);
@@ -246,6 +245,8 @@ export default function KnowledgeGraph() {
         const targetId = target.id;
         return filteredNodeIds.has(sourceId) && filteredNodeIds.has(targetId);
       });
+      // 调试：打印关系数据
+      console.log('filteredRelationships', filteredRelationships);
       // 完全重写初始布局策略，使用网格初始布局
       const gridSize = Math.ceil(Math.sqrt(filteredNodes.length));
       const gridStep = 150; // 网格单元大小
@@ -306,9 +307,12 @@ export default function KnowledgeGraph() {
         .data(filteredRelationships)
         .join('line')
         .attr('class', 'link')
-        .style('stroke', 'rgba(255, 255, 255, 0.3)') // 更改为白色半透明，适应暗色主题
-        .style('stroke-opacity', 0.6) // 提高默认透明度
-        .style('stroke-width', 1.5)
+        .attr('stroke', '#1976d2')
+        .attr('stroke-width', 4)
+        .attr('stroke-opacity', 1)
+        .attr('stroke-linecap', 'round')
+        .attr('pointer-events', 'all')
+        .attr('visibility', 'visible')
         .on('mouseover', function(event, d: Relationship) {
           event.stopPropagation(); // 阻止事件冒泡
           d3.select(this)
@@ -383,8 +387,8 @@ export default function KnowledgeGraph() {
       node.append('circle')
         .attr('r', (d: Node) => d.type === 'blog' ? 10 : 6) // 博客节点更大
         .style('fill', (d: Node) => getNodeColor(d))
-        .style('stroke', 'hsl(0 0% 100%)')
-        .style('stroke-width', 1)
+        .style('stroke', '#222')
+        .style('stroke-width', 1.5)
         .style('opacity', 0.8)
         .on('click', function(event, d: Node) {
           event.stopPropagation();
@@ -613,13 +617,13 @@ export default function KnowledgeGraph() {
         .attr('dx', (d: Node) => d.type === 'blog' ? 15 : 8)
         .attr('dy', '.35em')
         .text((d: Node) => d.label.length > 15 ? d.label.substring(0, 15) + '...' : d.label)
-        .style('font-size', '10px')
-        .style('fill', 'hsl(0 0% 100%)') // 始终使用白色文本
-        .style('font-weight', '600') // 加粗文本
-        .style('stroke', 'rgba(0, 0, 0, 0.7)') // 添加黑色描边
-        .style('stroke-width', '0.5px') // 细描边
-        .style('paint-order', 'stroke') // 确保描边在文字后面
-        .style('opacity', 0.9)
+        .style('font-size', '20px')
+        .style('font-weight', '900')
+        .style('fill', '#222')
+        .style('stroke', '#fff')
+        .style('stroke-width', '3px')
+        .style('paint-order', 'stroke')
+        .style('opacity', 1)
         .style('pointer-events', 'none');
 
       // 设置力模拟的tick事件，动态更新节点和连线位置
@@ -667,40 +671,6 @@ export default function KnowledgeGraph() {
     return TYPE_COLORS[type] || CATEGORY_COLORS[category] || '#3498DB';
   };
 
-  // 监听主题变化
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    // 初始化主题颜色
-    updateThemeColors();
-    
-    // 添加主题变化监听器
-    const handleThemeChange = () => {
-      updateThemeColors();
-      // 主题变化时重新渲染图谱
-      renderGraph();
-    };
-    
-    mediaQuery.addEventListener('change', handleThemeChange);
-  }, []);
-  
-  // 更新主题颜色函数
-  const updateThemeColors = () => {
-    const computedStyle = getComputedStyle(document.documentElement);
-    const foreground = computedStyle.getPropertyValue('--foreground').trim();
-    const secondaryForeground = computedStyle.getPropertyValue('--secondary-foreground').trim() || foreground;
-    
-    setThemeColors({
-      foreground: `hsl(${foreground})`,
-      secondaryForeground: `hsl(${secondaryForeground})`
-    });
-  };
-
-  // 简单的Tab样式
-  const tabStyle = "px-4 py-2 cursor-pointer font-medium";
-  const activeTabStyle = `${tabStyle} bg-primary text-primary-foreground rounded-md`;
-  const inactiveTabStyle = `${tabStyle} text-foreground hover:bg-accent hover:text-accent-foreground`;
-
   // 监听节点数据变化以记录类型分布
   useEffect(() => {
     if (nodesRef.current.length > 0) {
@@ -708,7 +678,6 @@ export default function KnowledgeGraph() {
       const timer = setTimeout(() => {
         console.log(`当前标签: ${activeTab}，已加载 ${nodesRef.current.length} 个节点`);
       }, 500);
-      
       return () => clearTimeout(timer);
     }
   }, [activeTab, nodesRef.current.length]);
