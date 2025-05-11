@@ -265,21 +265,6 @@ export default function KnowledgeGraph() {
       }));
       console.log('处理后的 nodes:', nodes);
 
-      // 完全重写初始布局策略，使用网格初始布局
-      const gridSize = Math.ceil(Math.sqrt(nodes.length));
-      const gridStep = 150; // 网格单元大小
-      const gridOffsetX = -((gridSize - 1) * gridStep) / 2;
-      const gridOffsetY = -((gridSize - 1) * gridStep) / 2;
-      
-      nodes.forEach((node, i) => {
-        const row = Math.floor(i / gridSize);
-        const col = i % gridSize;
-        // 添加随机偏移以避免完美的网格排列
-        const jitter = 20;
-        node.x = gridOffsetX + col * gridStep + (Math.random() - 0.5) * jitter;
-        node.y = gridOffsetY + row * gridStep + (Math.random() - 0.5) * jitter;
-      });
-
       // 处理关系数据，确保source和target是节点对象而不是字符串
       const relationships = data.relationships.map(rel => ({
         ...rel,
@@ -292,16 +277,56 @@ export default function KnowledgeGraph() {
       );
       console.log('处理后的 relationships:', relationships);
 
+      // 统计每个实体节点被多少博客节点关联
+      const blogNodeIds = new Set(nodes.filter(n => n.type === 'blog').map(n => n.id));
+      const entityBlogCount: Record<string, number> = {};
+      relationships.forEach(rel => {
+        const source = typeof rel.source === 'object' ? rel.source : nodes.find(n => n.id === rel.source);
+        const target = typeof rel.target === 'object' ? rel.target : nodes.find(n => n.id === rel.target);
+        if (!source || !target) return;
+        if (source.type === 'blog' && target.type !== 'blog') {
+          entityBlogCount[target.id] = (entityBlogCount[target.id] || 0) + 1;
+        }
+        if (target.type === 'blog' && source.type !== 'blog') {
+          entityBlogCount[source.id] = (entityBlogCount[source.id] || 0) + 1;
+        }
+      });
+      // 只保留被多个博客节点关联的实体节点
+      const filteredEntityIds = Object.entries(entityBlogCount)
+        .filter(([id, count]) => count >= 2)
+        .map(([id]) => id);
+      // 只保留博客节点和被多个博客节点关联的实体节点
+      const filteredNodes = nodes.filter(n =>
+        n.type === 'blog' || filteredEntityIds.includes(n.id)
+      );
+      // 只保留与这些节点相关的关系
+      const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+      const filteredRelationships = relationships.filter(rel => {
+        const sourceId = typeof rel.source === 'object' ? rel.source.id : rel.source;
+        const targetId = typeof rel.target === 'object' ? rel.target.id : rel.target;
+        return filteredNodeIds.has(sourceId) && filteredNodeIds.has(targetId);
+      });
+      // 完全重写初始布局策略，使用网格初始布局
+      const gridSize = Math.ceil(Math.sqrt(filteredNodes.length));
+      const gridStep = 150; // 网格单元大小
+      const gridOffsetX = -((gridSize - 1) * gridStep) / 2;
+      const gridOffsetY = -((gridSize - 1) * gridStep) / 2;
+      filteredNodes.forEach((node, i) => {
+        const row = Math.floor(i / gridSize);
+        const col = i % gridSize;
+        const jitter = 20;
+        node.x = gridOffsetX + col * gridStep + (Math.random() - 0.5) * jitter;
+        node.y = gridOffsetY + row * gridStep + (Math.random() - 0.5) * jitter;
+      });
+
       // 创建力导向布局，完全重新平衡力的配置
-      simulationRef.current = d3.forceSimulation<Node>(nodes)
-        .force('link', d3.forceLink<Node, Relationship>(relationships)
+      simulationRef.current = d3.forceSimulation<Node>(filteredNodes)
+        .force('link', d3.forceLink<Node, Relationship>(filteredRelationships)
           .id(d => d.id)
           .distance(d => {
-            // 动态连接距离 - 根据连接的重要性调整
             const source = d.source as Node;
             const target = d.target as Node;
-            const baseDistance = 180; // 增大基础距离
-            // 博客节点与其他节点之间的连接更长
+            const baseDistance = 180;
             if (source.type === 'blog' || target.type === 'blog') {
               return baseDistance * 1.3;
             }
@@ -338,7 +363,7 @@ export default function KnowledgeGraph() {
 
       // 创建连接线并设置动态更新位置
       const link = g.selectAll('.link')
-        .data(relationships)
+        .data(filteredRelationships)
         .join('line')
         .attr('class', 'link')
         .style('stroke', 'rgba(255, 255, 255, 0.3)') // 更改为白色半透明，适应暗色主题
@@ -394,7 +419,7 @@ export default function KnowledgeGraph() {
 
       // 创建节点组 - 不再设置固定位置，让模拟器动态更新
       const node = g.selectAll<SVGGElement, Node>('.node')
-        .data(nodes)
+        .data(filteredNodes)
         .join('g')
         .attr('class', 'node')
         .call(d3.drag<SVGGElement, Node>()
@@ -678,11 +703,15 @@ export default function KnowledgeGraph() {
       }
 
       // 更新节点和关系计数
-      setNodeCount(nodes.length);
-      setRelationshipCount(relationships.length);
+      setNodeCount(filteredNodes.length);
+      setRelationshipCount(filteredRelationships.length);
 
       // 设置加载完成
       setIsLoading(false);
+
+      // 搜索功能修正：同步当前渲染节点
+      nodesRef.current = filteredNodes;
+      linksRef.current = filteredRelationships;
     } catch (error) {
       console.error('获取知识图谱数据失败:', error);
     }
@@ -745,7 +774,7 @@ export default function KnowledgeGraph() {
   }, [activeTab, nodesRef.current.length]);
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-1">
       
       <div className="relative w-[80vw] max-w-2xl">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
@@ -757,7 +786,7 @@ export default function KnowledgeGraph() {
           className="w-full pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground rounded-md border px-3 py-2"
         />
       </div>
-      <div className="relative w-[80vw] h-[60vh] bg-background border border-border rounded-md overflow-hidden">
+      <div className="relative w-[80vw] h-[70vh] bg-background border border-border rounded-md overflow-hidden">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
             <div className="text-foreground text-xl">加载知识图谱中...</div>
