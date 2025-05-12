@@ -86,9 +86,11 @@ async function storeGraphData(graphData, tag) {
       // 存储节点
       for (const node of nodes) {
         const properties = node.properties || {};
+        // 博客节点用Blog标签，实体节点用Entity标签
+        let label = node.type === 'blog' ? 'Blog' : 'Entity';
         try {
           await session.run(
-            `MERGE (n:${nodeLabel} {id: $id})
+            `MERGE (n:${label} {id: $id})
              ON CREATE SET 
                n.type = $type,
                n.title = $title,
