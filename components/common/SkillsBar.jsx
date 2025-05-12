@@ -12,7 +12,6 @@ import PrismaIcon from "@/public/icons/PrismaIcon";
 import ReactIcon from "@/public/icons/ReactIcon";
 import RedisIcon from "@/public/icons/RedisIcon";
 import SpringIcon from "@/public/icons/SpringIcon";
-import SupabaseIcon from "@/public/icons/SupabaseIcon";
 import TailwindIcon from "@/public/icons/TailwindIcon";
 import ViteIcon from "@/public/icons/ViteIcon";
 
@@ -40,7 +39,6 @@ export default function SkillsBar() {
           <PrismaIcon className="skillsIcon" />
           <ExpressIcon className="skillsIcon" />
           <MongoIcon className="skillsIcon" />
-          <SupabaseIcon className="skillsIcon" />
           <RedisIcon className="skillsIcon" />
         </div>
       </div>

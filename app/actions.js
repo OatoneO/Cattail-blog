@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { saveProject, deleteProject } from "@/lib/project";
 import { redirect } from "next/navigation";
-import { createBlog, updateBlog, deleteBlog } from "@/lib/db/blog-service";
+import { createBlog, updateBlog, deleteBlog, getBlogBySlug } from "@/lib/db/blog-service";
 
 export async function createMessage(formData) {
   const user = await currentUser();
@@ -36,7 +36,6 @@ export async function createOrUpdateBlog(formData) {
     const blogData = {
       title: formData.get('title'),
       summary: formData.get('summary'),
-      image: formData.get('image'),
       author: formData.get('author'),
       publishedAt: formData.get('publishedAt'),
       tag: formData.get('tag'),
@@ -61,9 +60,10 @@ export async function createOrUpdateBlog(formData) {
 
     // 确保图片数据正确格式化
     const images = [];
-    if (blogData.image && blogData.image !== '/images/loading.jpg') {
+    const imageUrl = formData.get('image');
+    if (imageUrl && imageUrl !== '/images/loading.jpg') {
       images.push({
-        url: blogData.image,
+        url: imageUrl,
         alt: blogData.title || '博客封面图片'
       });
     }
@@ -72,10 +72,20 @@ export async function createOrUpdateBlog(formData) {
     
     let blog;
     if (slug) {
-      blog = await updateBlog(slug, {
-        ...blogData,
-        images
-      });
+      // 检查博客是否存在
+      const existingBlog = await getBlogBySlug(slug);
+      if (existingBlog) {
+        blog = await updateBlog(slug, {
+          ...blogData,
+          images
+        });
+      } else {
+        blog = await createBlog({
+          ...blogData,
+          slug,
+          images
+        });
+      }
     } else {
       blog = await createBlog({
         ...blogData,

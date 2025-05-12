@@ -13,11 +13,12 @@ readTime: 5 min read
 - Framework: **React + Next.js**
 - Styling: **Tailwind CSS** + **Shadcn UI**
 - Animation: **Framer Motion**
-- Database: **Supabase**
+- Database: **SQLite**
 - ORM: **Prisma**
 - CMS: **Sanity**
 - Authentication: **Clerk**
 - Deployment: **Vercel**
+- Graph Database: **Neo4j**
 
 ## 💡Get Started
 
@@ -147,6 +148,17 @@ npm run dev
 ```
 
 6. Navigate to [localhost:3333](http://localhost:3333), now you can add projects to the website.
+
+## 数据库设置
+
+### SQLite
+
+1. 项目使用 SQLite 作为数据库，数据库文件位于 `prisma/dev.db`
+2. 使用 Prisma ORM 进行数据库管理
+3. 运行以下命令初始化数据库：
+   ```bash
+   npx prisma migrate dev
+   ```
 
 ### Run the server
 
