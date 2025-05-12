@@ -107,10 +107,8 @@ async function storeBlogGraphData(graphData, tag) {
   try {
     const { nodes, relationships } = graphData;
     
-    // 根据博客标签确定节点标签
-    const nodeLabel = tag.toLowerCase().includes('html') ? 'HTMLConcept' : 
-                     tag.toLowerCase().includes('css') ? 'CSSConcept' : 
-                     'TechConcept';
+    // 直接使用博客标签作为节点标签
+    const nodeLabel = tag;
     
     // 使用Neo4j服务存储节点
     await storeNeo4jNodes(nodes, nodeLabel);

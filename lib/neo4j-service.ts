@@ -102,7 +102,7 @@ async function testConnection() {
   }
 }
 
-export async function importData(data: GraphData, type: 'css' | 'html' = 'css') {
+export async function importData(data: GraphData, type: string) {
   console.log(`正在测试数据库连接... (导入类型: ${type})`);
   const isConnected = await testConnection();
   if (!isConnected) {
@@ -116,9 +116,8 @@ export async function importData(data: GraphData, type: 'css' | 'html' = 'css') 
   
   const session = driver.session();
   try {
-    // 确定正确的节点标签
-    // HTML节点类型在JSON中可能是html_concept，但我们在Neo4j中将其规范化为HTMLConcept
-    const nodeLabel = type.toUpperCase() + 'Concept';
+    // 直接使用传入的type作为节点标签
+    const nodeLabel = type;
     
     console.log(`清除现有${nodeLabel}数据...`);
     // 清除现有数据
@@ -127,9 +126,6 @@ export async function importData(data: GraphData, type: 'css' | 'html' = 'css') 
     console.log(`创建${nodeLabel}节点...`);
     // 创建节点
     for (const node of data.nodes) {
-      // 检查节点类型是否与预期相符
-      console.log(`节点类型: ${node.type}, 预期类型: ${type}_concept`);
-      
       await session.run(
         `CREATE (n:${nodeLabel} {
           id: $id,
@@ -160,15 +156,15 @@ export async function importData(data: GraphData, type: 'css' | 'html' = 'css') 
     
     return { message: `${nodeLabel}数据导入成功` };
   } catch (error) {
-    console.error(`导入${type.toUpperCase()}数据错误:`, error);
-    throw new Error(`导入${type.toUpperCase()}数据失败`);
+    console.error(`导入${type}数据错误:`, error);
+    throw new Error(`导入${type}数据失败`);
   } finally {
     await session.close();
   }
 }
 
-export async function getGraphData(type: 'css' | 'html' = 'css'): Promise<ApiGraphData> {
-  console.log(`Neo4j 服务: 开始获取${type.toUpperCase()}图谱数据`);
+export async function getGraphData(type: string): Promise<ApiGraphData> {
+  console.log(`Neo4j 服务: 开始获取${type}图谱数据`);
   
   const driver = getDriver();
   if (!driver) {
@@ -177,8 +173,8 @@ export async function getGraphData(type: 'css' | 'html' = 'css'): Promise<ApiGra
   
   const session = driver.session();
   try {
-    // 确定正确的节点标签
-    const nodeLabel = type.toUpperCase() + 'Concept';
+    // 直接使用传入的type作为节点标签
+    const nodeLabel = type;
     
     console.log(`执行 Neo4j 查询 (节点标签: ${nodeLabel})...`);
     const result = await session.run(`
