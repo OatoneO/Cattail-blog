@@ -8,20 +8,9 @@
  * - 处理认证状态
  */
 
-import { authMiddleware } from "@clerk/nextjs";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default authMiddleware({
-  // 公开路由，不需要认证
-  publicRoutes: [
-    "/",
-    "/blog(.*)",
-    "/api/blog(.*)",
-    "/api/projects(.*)",
-    "/api/graph-data(.*)",
-    "/api/import-data(.*)",
-    "/api/admin/upload",
-  ]
-});
+export default clerkMiddleware();
 
 export const config = {
   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],

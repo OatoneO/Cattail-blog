@@ -4,20 +4,9 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import BlogPreview from "@/components/blog/BlogPreview";
-import { Suspense } from "react";
-import PreviewBlogPage from "./PreviewBlogPage";
 
-export default function Page() {
-  return (
-    <Suspense>
-      <PreviewBlogPage />
-    </Suspense>
-  );
-}
-
-function PreviewBlogContent() {
+export default function PreviewBlogPage() {
   const searchParams = useSearchParams();
-  
   // 从URL查询参数中解析博客数据
   const title = searchParams.get("title") || "博客标题";
   const summary = searchParams.get("summary") || "博客摘要";

@@ -35,7 +35,7 @@ export default function DeleteProjectDialog({ isOpen, onClose, project }) {
       <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full">
         <h3 className="text-xl font-semibold mb-4">确认删除</h3>
         <p className="text-gray-300 mb-6">
-          您确定要删除项目 "{project.title}" 吗？此操作无法撤销。
+          您确定要删除项目 &quot;{project.title}&quot; 吗？此操作无法撤销。
         </p>
         <div className="flex justify-end gap-4">
           <button

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 interface Node extends d3.SimulationNodeDatum {
   id: string;
@@ -114,13 +114,8 @@ export default function KnowledgeGraph() {
   // const [availableTags, setAvailableTags] = useState<string[]>([]);
   // const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  // 当页面加载或activeTab更改时重新渲染图谱
-  useEffect(() => {
-    renderGraph();
-  }, [activeTab]);
-
   // 渲染图谱的函数
-  const renderGraph = async () => {
+  const renderGraph = useCallback(async () => {
     if (!svgElementRef.current) return;
 
     setIsLoading(true);
@@ -659,7 +654,11 @@ export default function KnowledgeGraph() {
     } catch (error) {
       console.error('获取知识图谱数据失败:', error);
     }
-  };
+  }, [selectedNode]);
+
+  useEffect(() => {
+    renderGraph();
+  }, [activeTab, renderGraph]);
 
   // 获取节点颜色
   const getNodeColor = (node: Node) => {

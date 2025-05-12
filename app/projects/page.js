@@ -1,5 +1,5 @@
 import { getAllProjects } from "@/lib/db/project-service";
-import Projects from "@/components/Projects";
+import Projects from "@/components/project/Projects";
 
 export const dynamic = "force-dynamic";
 
