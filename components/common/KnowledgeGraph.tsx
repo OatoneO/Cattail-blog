@@ -166,15 +166,14 @@ export default function KnowledgeGraph() {
         }
       }));
 
-      // 以 label 为唯一标识（标准化：去除首尾空格并转小写）去重
-      const labelMap = new Map<string, Node>();
+      // 以 id 为唯一标识去重
+      const idMap = new Map<string, Node>();
       nodes.forEach(node => {
-        const normLabel = node.label.trim().toLowerCase();
-        if (!labelMap.has(normLabel)) {
-          labelMap.set(normLabel, node);
+        if (!idMap.has(node.id)) {
+          idMap.set(node.id, node);
         }
       });
-      const uniqueNodes = Array.from(labelMap.values());
+      const uniqueNodes = Array.from(idMap.values());
 
       // 处理关系数据，确保source/target正确引用节点对象
       const idToNode = new Map(uniqueNodes.map(n => [n.id, n]));
@@ -220,13 +219,13 @@ export default function KnowledgeGraph() {
         }
       });
       
-      // 筛选出与多个博客节点相关的实体节点（至少与2个博客相关）
-      const MIN_BLOG_CONNECTIONS = 2;  // 严格要求至少与2个博客节点有关系
+      // 筛选出与多个博客节点相关的实体节点（至少与3个博客相关）
+      const MIN_BLOG_CONNECTIONS = 3;
       const importantEntityIds = Object.entries(entityToBlogCount)
         .filter(([_, count]) => count >= MIN_BLOG_CONNECTIONS)
         .map(([id]) => id);
       
-      // 合并博客节点和重要实体节点 - 确保包含所有8个博客节点
+      // 合并博客节点和重要实体节点
       const filteredNodes = uniqueNodes.filter(node => 
         node.type === 'blog' || importantEntityIds.includes(node.id)
       );

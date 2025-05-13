@@ -119,22 +119,20 @@ export async function importData(data: GraphData, type: string) {
     // 直接使用传入的type作为节点标签
     const nodeLabel = type;
     
-    console.log(`清除现有${nodeLabel}数据...`);
+    // console.log(`清除现有${nodeLabel}数据...`);
     // 清除现有数据
-    await session.run(`MATCH (n:${nodeLabel}) DETACH DELETE n`);
+    // await session.run(`MATCH (n:${nodeLabel}) DETACH DELETE n`);
     
     console.log(`创建${nodeLabel}节点...`);
     // 创建节点
     for (const node of data.nodes) {
       await session.run(
-        `CREATE (n:${nodeLabel} {
-          id: $id,
-          type: $type,
-          title: $title,
-          url: $url,
-          summary: $summary,
-          category: $category
-        })`,
+        `MERGE (n:${nodeLabel} {id: $id})
+         SET n.type = $type,
+             n.title = $title,
+             n.url = $url,
+             n.summary = $summary,
+             n.category = $category`,
         {
           id: node.id,
           type: node.type,
