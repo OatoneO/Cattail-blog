@@ -5,6 +5,14 @@ import Link from 'next/link';
 import { Edit2, Trash2 } from 'lucide-react';
 import DeleteProjectDialog from './DeleteProjectDialog';
 
+function Tag({ children }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-primary/10 text-primary rounded-md">
+      {children}
+    </span>
+  );
+}
+
 export default function ProjectList({ projects }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -33,12 +41,7 @@ export default function ProjectList({ projects }) {
               <td className="px-4 py-3">
                 <div className="flex flex-wrap gap-1">
                   {project.technologies?.map((tech, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-0.5 text-xs bg-gray-700 rounded-full"
-                    >
-                      {tech}
-                    </span>
+                    <Tag key={index}>{tech}</Tag>
                   ))}
                 </div>
               </td>
