@@ -2,74 +2,110 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Edit2, Trash2 } from 'lucide-react';
-import DeleteProjectDialog from './DeleteProjectDialog';
+import Image from 'next/image';
+import { Edit, Trash2, Eye, ExternalLink } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { Tag } from "@/components/ui/tag";
+import { toast } from "sonner";
 
-function Tag({ children }) {
-  return (
-    <span className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-primary/10 text-primary rounded-md">
-      {children}
-    </span>
-  );
-}
+export default function ProjectList({ project }) {
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
-export default function ProjectList({ projects }) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const handleDeleteProject = async () => {
+    if (confirm(`确定要删除项目 "${project.title}" 吗？`)) {
+      setIsDeleting(true);
+      
+      try {
+        const response = await fetch(`/api/projects/${project.id}`, {
+          method: 'DELETE',
+        });
 
-  const handleDeleteClick = (project) => {
-    setSelectedProject(project);
-    setIsDeleteDialogOpen(true);
+        if (!response.ok) {
+          throw new Error('删除失败');
+        }
+
+        toast.success("项目已删除");
+        router.refresh();
+      } catch (error) {
+        console.error("Error deleting project:", error);
+        toast.error("删除失败，请重试");
+      } finally {
+        setIsDeleting(false);
+      }
+    }
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b border-gray-700">
-            <th className="px-4 py-2 text-left">标题</th>
-            <th className="px-4 py-2 text-left">描述</th>
-            <th className="px-4 py-2 text-left">技术栈</th>
-            <th className="px-4 py-2 text-left">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {projects.map((project) => (
-            <tr key={project.id} className="border-b border-gray-700 hover:bg-gray-800/50">
-              <td className="px-4 py-3">{project.title}</td>
-              <td className="px-4 py-3 max-w-md truncate">{project.description}</td>
-              <td className="px-4 py-3">
-                <div className="flex flex-wrap gap-1">
-                  {project.technologies?.map((tech, index) => (
-                    <Tag key={index}>{tech}</Tag>
-                  ))}
-                </div>
-              </td>
-              <td className="px-4 py-3">
-                <div className="flex gap-2">
-                  <Link
-                    href={`/admin/projects/edit/${project.id}`}
-                    className="p-1 text-blue-400 hover:text-blue-300"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </Link>
-                  <button
-                    onClick={() => handleDeleteClick(project)}
-                    className="p-1 text-red-400 hover:text-red-300"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <DeleteProjectDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        project={selectedProject}
-      />
+    <div className="flex flex-col sm:flex-row items-stretch gap-4 p-4 border border-border rounded-lg hover:bg-muted/30">
+      <div className="relative aspect-[16/9] sm:w-48 rounded-md overflow-hidden">
+        <Image
+          src={imageError ? "/images/image_loading.jpeg" : project.imageUrl || "/images/loading.jpg"}
+          alt={project.title}
+          fill
+          className="object-cover"
+          onError={() => setImageError(true)}
+        />
+      </div>
+      
+      <div className="flex-1 flex flex-col">
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold mb-1">{project.title}</h3>
+          <div className="flex flex-wrap gap-1 mb-2">
+            {project.technologies?.map((tech, index) => (
+              <Tag key={index}>{tech}</Tag>
+            ))}
+          </div>
+          <p className="text-sm line-clamp-2">{project.description || "无描述"}</p>
+        </div>
+        
+        <div className="flex gap-2 mt-3">
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1"
+            onClick={() => router.push(`/project/${project.id}`)}
+          >
+            <Eye className="w-4 h-4" />
+            <span>查看</span>
+          </Button>
+          
+          {project.link && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1"
+              onClick={() => window.open(project.link, "_blank")}
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span>访问</span>
+            </Button>
+          )}
+          
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1"
+            onClick={() => router.push(`/admin/projects/edit/${project.id}`)}
+          >
+            <Edit className="w-4 h-4" />
+            <span>编辑</span>
+          </Button>
+          
+          <Button
+            size="sm"
+            variant="destructive"
+            className="gap-1"
+            onClick={handleDeleteProject}
+            disabled={isDeleting}
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>{isDeleting ? "删除中..." : "删除"}</span>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 } 
