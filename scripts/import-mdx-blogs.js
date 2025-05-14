@@ -1,3 +1,14 @@
+/**
+ * MDX博客知识图谱导入器
+ * 
+ * 该模块负责将MDX格式的博客文章导入到Neo4j图数据库中，主要功能包括：
+ * 1. 读取MDX博客文件内容
+ * 2. 将博客内容转换为知识图谱节点和关系
+ * 3. 将数据存储到Neo4j图数据库
+ * 4. 支持博客标签和分类的处理
+ * 5. 提供数据导入的错误处理和日志记录
+ */
+
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
