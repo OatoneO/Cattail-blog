@@ -1,44 +1,31 @@
-import Image from "next/image";
+/**
+ * 留言列表组件（服务器端）
+ * 用于获取和展示所有用户的留言
+ * 
+ * 功能：
+ * - 获取留言数据
+ * - 验证管理员权限
+ * - 展示留言列表
+ * - 限制显示最新的50条留言
+ */
+
 import prisma from "@/lib/db";
-import { formatDistanceToNow } from "date-fns";
+import { currentUser } from "@clerk/nextjs/server";
+import MessageItem from "./MessageItem";
 
 export default async function Messages() {
   const messages = await getMessages();
+  const user = await currentUser();
+  const isAdmin = user?.id === "user_2vxec51JBR7zN12XcPs7FGKksT8";
 
   return (
     <ul className="flex flex-col space-y-2">
       {messages.map((message, index) => (
-        <li key={message.id}>
-          <div className="flex items-start gap-3 my-1">
-            <div className="flex flex-col items-center flex-shrink-0 gap-2">
-              <Image
-                src={message.userImg}
-                width={40}
-                height={40}
-                alt="user profile image"
-                className="mb-1 rounded-full"
-              />
-              {index != messages.length - 1 && (
-                <div className="w-1 h-3 border-l-2 border-foreground"></div>
-              )}
-            </div>
-
-            <div className="flex flex-col w-full ">
-              <div className="flex items-center gap-2">
-                <p>{message.userName}</p>
-                <span className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(message.createdAt), {
-                    addSuffix: true,
-                  })}
-                </span>
-              </div>
-
-              <p className="mt-1 text-xs font-light break-words">
-                {message.message}
-              </p>
-            </div>
-          </div>
-        </li>
+        <MessageItem 
+          key={message.id} 
+          message={message} 
+          isAdmin={isAdmin}
+        />
       ))}
     </ul>
   );

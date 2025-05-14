@@ -1,3 +1,14 @@
+/**
+ * 留言板页面组件
+ * 用于展示留言板的主页面
+ * 
+ * 功能：
+ * - 展示留言板描述
+ * - 根据用户登录状态显示留言表单或登录提示
+ * - 展示留言列表
+ * - 支持异步加载和加载状态展示
+ */
+
 import MessageForm from "@/components/common/MessageForm";
 import {
   LoadingState,

@@ -7,6 +7,18 @@ import { saveProject, deleteProject } from "@/lib/project";
 import { redirect } from "next/navigation";
 import { createBlog, updateBlog, deleteBlog, getBlogBySlug } from "@/lib/db/blog-service";
 
+/**
+ * 创建新留言
+ * 
+ * 功能：
+ * - 验证用户登录状态
+ * - 创建新的留言记录
+ * - 自动关联用户信息
+ * - 提交后刷新留言板页面
+ * 
+ * @param {FormData} formData - 包含留言内容的表单数据
+ * @throws {Error} 当用户未登录时抛出未授权错误
+ */
 export async function createMessage(formData) {
   const user = await currentUser();
 
@@ -28,6 +40,50 @@ export async function createMessage(formData) {
   });
 
   revalidatePath("/message");
+}
+
+/**
+ * 删除留言
+ * 
+ * 功能：
+ * - 验证用户是否为管理员
+ * - 删除指定留言
+ * - 提交后刷新留言板页面
+ * 
+ * @param {FormData} formData - 包含留言ID的表单数据
+ * @throws {Error} 当用户未登录或非管理员时抛出未授权错误
+ */
+export async function removeMessage(formData) {
+  const user = await currentUser();
+  const messageId = formData.get("messageId");
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  // 验证是否为管理员
+  const isAdmin = user.id === "user_2vxec51JBR7zN12XcPs7FGKksT8";
+  if (!isAdmin) {
+    throw new Error("Unauthorized: Only admin can delete messages");
+  }
+
+  if (!messageId) {
+    throw new Error("Message ID is required");
+  }
+
+  try {
+    await prisma.message.delete({
+      where: {
+        id: messageId
+      }
+    });
+
+    revalidatePath("/message");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    return { success: false, error: error.message };
+  }
 }
 
 // 博客相关操作

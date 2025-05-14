@@ -25,6 +25,21 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+/**
+ * 留言数据模型
+ * 用于存储用户留言信息
+ * 
+ * 字段说明：
+ * - id: 留言唯一标识符
+ * - message: 留言内容
+ * - createdAt: 创建时间
+ * - userId: 用户ID
+ * - userName: 用户名称
+ * - userImg: 用户头像URL
+ * - parentId: 父留言ID（用于回复功能）
+ * - parent: 父留言关联
+ * - replies: 回复列表
+ */
 model Message {
   id        String   @id @default(uuid())
   message   String
@@ -32,6 +47,9 @@ model Message {
   userId    String
   userName  String
   userImg   String
+  parentId  String?
+  parent    Message? @relation("MessageToReplies", fields: [parentId], references: [id])
+  replies   Message[] @relation("MessageToReplies")
 }
 
 model Blog {
