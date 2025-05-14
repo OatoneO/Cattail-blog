@@ -16,7 +16,6 @@ import AdminBlogItem from "@/components/blog/AdminBlogItem";
 import { getAllBlogs } from "@/lib/db/blog-service";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 export default async function AdminBlogsPage() {
   const blogs = await getAllBlogs();
@@ -28,9 +27,9 @@ export default async function AdminBlogsPage() {
   }));
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">博客管理</h1>
+    <div className="pt-2">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-bold">博客管理</h1>
         <Link href="/admin/blogs/new">
           <Button className="gap-1">
             <PlusCircle className="w-4 h-4" />
@@ -40,7 +39,7 @@ export default async function AdminBlogsPage() {
       </div>
 
       {formattedBlogs.length === 0 ? (
-        <div className="text-center py-12 border border-dashed border-border rounded-lg">
+        <div className="text-center py-8 border border-dashed border-border rounded-lg">
           <p className="text-muted-foreground mb-4">暂无博客文章</p>
           <Link href="/admin/blogs/new">
             <Button size="sm" variant="outline">
