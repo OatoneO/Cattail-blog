@@ -46,12 +46,12 @@ export async function createMessage(formData) {
  * 删除留言
  * 
  * 功能：
- * - 验证用户是否为管理员
+ * - 验证用户权限（管理员或留言发布者）
  * - 删除指定留言
  * - 提交后刷新留言板页面
  * 
  * @param {FormData} formData - 包含留言ID的表单数据
- * @throws {Error} 当用户未登录或非管理员时抛出未授权错误
+ * @throws {Error} 当用户未登录或无权删除时抛出未授权错误
  */
 export async function removeMessage(formData) {
   const user = await currentUser();
@@ -61,14 +61,21 @@ export async function removeMessage(formData) {
     throw new Error("Unauthorized");
   }
 
-  // 验证是否为管理员
-  const isAdmin = user.id === "user_2vxec51JBR7zN12XcPs7FGKksT8";
-  if (!isAdmin) {
-    throw new Error("Unauthorized: Only admin can delete messages");
+  // 获取留言信息
+  const message = await prisma.message.findUnique({
+    where: { id: messageId }
+  });
+
+  if (!message) {
+    throw new Error("Message not found");
   }
 
-  if (!messageId) {
-    throw new Error("Message ID is required");
+  // 验证权限：管理员或留言发布者
+  const isAdmin = user.id === "user_2vxec51JBR7zN12XcPs7FGKksT8";
+  const isAuthor = message.userId === user.id;
+
+  if (!isAdmin && !isAuthor) {
+    throw new Error("Unauthorized: Only admin or message author can delete messages");
   }
 
   try {

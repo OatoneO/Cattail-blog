@@ -6,7 +6,7 @@
  * - 显示留言内容
  * - 显示用户信息
  * - 显示时间
- * - 管理员删除功能
+ * - 管理员或留言发布者可删除留言
  */
 
 "use client";
@@ -16,8 +16,13 @@ import { formatDistanceToNow } from "date-fns";
 import { Trash2 } from "lucide-react";
 import { removeMessage } from "@/app/actions";
 import { toast } from "sonner";
+import { useAuth } from "@clerk/nextjs";
 
 export default function MessageItem({ message, isAdmin }) {
+  const { userId } = useAuth();
+  const isAuthor = userId === message.userId;
+  const canDelete = isAdmin || isAuthor;
+
   return (
     <li>
       <div className="flex items-start gap-3 my-1">
@@ -41,7 +46,7 @@ export default function MessageItem({ message, isAdmin }) {
                 })}
               </span>
             </div>
-            {isAdmin && (
+            {canDelete && (
               <form
                 action={async (formData) => {
                   try {
