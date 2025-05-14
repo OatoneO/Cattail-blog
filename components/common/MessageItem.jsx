@@ -6,7 +6,7 @@
  * - 显示留言内容
  * - 显示用户信息
  * - 显示时间
- * - 管理员或留言发布者可删除留言
+ * - 管理员或留言发布者可删除留言（仅登录用户可见）
  */
 
 "use client";
@@ -19,9 +19,9 @@ import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 
 export default function MessageItem({ message, isAdmin }) {
-  const { userId } = useAuth();
-  const isAuthor = userId === message.userId;
-  const canDelete = isAdmin || isAuthor;
+  const { userId, isSignedIn } = useAuth();
+  const isAuthor = isSignedIn && userId === message.userId;
+  const canDelete = isSignedIn && (isAdmin || isAuthor);
 
   return (
     <li>
