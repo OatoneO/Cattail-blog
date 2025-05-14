@@ -1,10 +1,17 @@
 /**
- * 博客知识图谱处理API路由
- * 处理博客内容，提取三元组数据，存储到Neo4j
+ * 博客知识图谱处理API
  * 
- * 路由功能：
- * - POST: 处理单篇博客内容，并存储到Neo4j
- * - GET: 处理所有博客内容，重建知识图谱
+ * 该API负责处理博客内容并生成知识图谱数据，主要功能包括：
+ * 1. 接收博客内容数据
+ * 2. 调用知识图谱处理器提取实体和关系
+ * 3. 将处理结果存储到Neo4j数据库
+ * 4. 返回处理结果和状态信息
+ * 
+ * 技术特点：
+ * - 使用Next.js API路由处理HTTP请求
+ * - 实现了请求参数验证
+ * - 支持异步处理和错误处理
+ * - 提供了详细的处理状态和错误信息
  */
 
 import { NextResponse } from 'next/server';
@@ -12,49 +19,98 @@ import { getBlogBySlug, getAllBlogs } from '@/lib/db/blog-service';
 // 使用命名导入
 import { processBlogContent } from '@/lib/blog-knowledge-processor';
 import * as neo4jService from '@/lib/neo4j-service';
+import neo4j from 'neo4j-driver';
 
-// 不再需要处理导入兼容性
-// const blogProcessor = typeof processBlogContent === 'function' 
-//   ? processBlogContent 
-//   : processBlogContent.processBlogContent;
+/**
+ * Neo4j数据库连接配置
+ */
+const NEO4J_URI = process.env.NEO4J_URI || 'bolt://localhost:7687';
+const NEO4J_USER = process.env.NEO4J_USER || 'neo4j';
+const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD || 'password';
 
-// 处理单篇博客
+/**
+ * 创建Neo4j数据库连接
+ * @returns {neo4j.Driver} Neo4j驱动实例
+ */
+function createDriver() {
+  return neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD));
+}
+
+/**
+ * 存储知识图谱数据到Neo4j
+ * @param {Object} graphData - 知识图谱数据
+ * @returns {Promise<void>}
+ */
+async function storeGraphData(graphData) {
+  const driver = createDriver();
+  const session = driver.session();
+  
+  try {
+    const tx = session.beginTransaction();
+    
+    // 存储节点
+    for (const node of graphData.nodes) {
+      await tx.run(
+        `MERGE (n:${node.type} {id: $id})
+         SET n += $properties`,
+        { id: node.id, properties: node.properties }
+      );
+    }
+    
+    // 存储关系
+    for (const rel of graphData.relationships) {
+      await tx.run(
+        `MATCH (source {id: $sourceId})
+         MATCH (target {id: $targetId})
+         MERGE (source)-[r:${rel.type}]->(target)`,
+        { sourceId: rel.source, targetId: rel.target }
+      );
+    }
+    
+    await tx.commit();
+  } finally {
+    await session.close();
+    await driver.close();
+  }
+}
+
+/**
+ * POST请求处理函数
+ * 处理博客内容并生成知识图谱数据
+ * 
+ * @param {Request} request - HTTP请求对象
+ * @returns {Promise<NextResponse>} 处理结果响应
+ */
 export async function POST(request) {
   try {
-    const data = await request.json();
-    const { slug } = data;
+    // 解析请求体
+    const blogData = await request.json();
     
-    if (!slug) {
+    // 验证请求数据
+    if (!blogData || !blogData.title || !blogData.content) {
       return NextResponse.json(
-        { error: '缺少必要参数: slug' },
+        { error: 'Invalid request data' },
         { status: 400 }
       );
     }
     
-    // 获取博客内容
-    const blog = await getBlogBySlug(slug);
-    if (!blog) {
-      return NextResponse.json(
-        { error: `未找到博客: ${slug}` },
-        { status: 404 }
-      );
-    }
+    // 处理博客内容
+    const graphData = await processBlogContent(blogData);
     
-    // 使用命名导入的函数
-    const graphData = await processBlogContent(blog);
+    // 存储到Neo4j
+    await storeGraphData(graphData);
     
-    // 将数据存储到Neo4j
-    await storeBlogGraphData(graphData, blog.tag || 'General');
-    
+    // 返回处理结果
     return NextResponse.json({
-      message: '博客知识图谱处理成功',
-      nodes: graphData.nodes.length,
-      relationships: graphData.relationships.length,
+      success: true,
+      message: 'Blog processed successfully',
+      data: graphData
     });
+    
   } catch (error) {
-    console.error('处理博客知识图谱失败:', error);
+    console.error('Error processing blog:', error);
     return NextResponse.json(
-      { error: '处理博客知识图谱失败', details: error.message },
+      { error: 'Internal server error', details: error.message },
       { status: 500 }
     );
   }
@@ -71,7 +127,7 @@ export async function GET() {
     for (const blog of blogs) {
       try {
         const graphData = await processBlogContent(blog);
-        await storeBlogGraphData(graphData, blog.tag || 'General');
+        await storeGraphData(graphData);
         
         results.push({
           slug: blog.slug,

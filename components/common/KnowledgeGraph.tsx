@@ -7,47 +7,71 @@
  * 3. 提供节点类型区分（博客节点和实体节点）
  * 4. 实现力导向布局算法，自动计算节点位置
  * 5. 支持节点点击跳转到对应的博客文章
+ * 
+ * 技术特点：
+ * - 使用D3.js的力导向布局算法实现自动布局
+ * - 支持节点和关系的动态过滤和筛选
+ * - 实现了基于节点类型的差异化布局策略
+ * - 提供了丰富的交互功能和视觉反馈
+ * - 支持大规模图数据的性能优化
  */
 
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
+
+/**
+ * 节点数据结构
+ * 继承自D3的SimulationNodeDatum以支持力导向布局
+ */
 interface Node extends d3.SimulationNodeDatum {
-  id: string;
-  label: string;
-  type: string;  // 现在只有两种类型：'blog' 和 'entity'
-  properties: {
-    url: string;
-    summary: string;
-    category: string;
+  id: string;          // 节点唯一标识
+  label: string;       // 节点显示标签
+  type: string;        // 节点类型：'blog' 或 'entity'
+  properties: {        // 节点属性
+    url: string;       // 博客URL（仅博客节点）
+    summary: string;   // 节点描述
+    category: string;  // 节点分类
   };
-  x?: number;
-  y?: number;
-  z?: number;
-  phi?: number;
-  theta?: number;
-  radius?: number;
+  x?: number;          // 节点X坐标
+  y?: number;          // 节点Y坐标
+  z?: number;          // 节点Z坐标（3D布局）
+  phi?: number;        // 球面坐标phi角
+  theta?: number;      // 球面坐标theta角
+  radius?: number;     // 球面坐标半径
 }
 
+/**
+ * 关系数据结构
+ */
 interface Relationship {
-  source: Node | string;
-  target: Node | string;
-  type: string;
+  source: Node | string;  // 源节点
+  target: Node | string;  // 目标节点
+  type: string;          // 关系类型
 }
 
+/**
+ * 图谱数据结构
+ */
 interface GraphData {
-  nodes: Node[];
-  relationships: Relationship[];
+  nodes: Node[];              // 节点列表
+  relationships: Relationship[]; // 关系列表
 }
 
-// 简化节点颜色映射，只区分博客和实体两种类型
+/**
+ * 节点类型颜色映射
+ * 用于区分不同类型的节点
+ */
 const TYPE_COLORS: Record<string, string> = {
   'blog': '#FF5722',  // 博客节点为橙色
   'entity': '#4ECDC4' // 实体节点为青色
 };
 
-// 移除不需要的类别颜色映射
+/**
+ * 节点分类颜色映射
+ * 用于区分不同分类的节点
+ */
 const CATEGORY_COLORS: Record<string, string> = {
   '前端': '#45B7D1',
   '后端': '#9B59B6',
@@ -56,34 +80,33 @@ const CATEGORY_COLORS: Record<string, string> = {
   '其他': '#3498DB'
 };
 
-// 默认颜色序列
+/**
+ * 默认颜色序列
+ * 用于节点颜色分配
+ */
 const DEFAULT_COLORS = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
   '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22', '#2ECC71'
 ];
 
-// 生成随机颜色
+/**
+ * 生成随机颜色
+ * 用于未指定颜色的节点
+ */
 function getRandomColor() {
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
-    '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22', '#2ECC71'
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
+  return DEFAULT_COLORS[Math.floor(Math.random() * DEFAULT_COLORS.length)];
 }
 
-// 3D 坐标转换函数
-function project(d: Node) {
-  // 使用简单的静态布局而不是3D投影
-  const radius = 300;
-  
-  // 保持函数接口一致，但不使用phi和theta
-  return {
-    x: d.x || 0,
-    y: d.y || 0,
-    scale: 1
-  };
-}
-
+/**
+ * 知识图谱可视化组件
+ * 
+ * 主要功能：
+ * 1. 数据加载和预处理
+ * 2. 力导向布局计算
+ * 3. 节点和关系的可视化渲染
+ * 4. 交互事件处理
+ * 5. 视图状态管理
+ */
 export default function KnowledgeGraph() {
   console.log('KnowledgeGraph 组件正在初始化...');
   const svgElementRef = useRef<SVGSVGElement>(null);
